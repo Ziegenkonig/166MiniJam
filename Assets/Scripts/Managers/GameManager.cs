@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = -10;
         wormHead.transform.position = Vector3.MoveTowards(wormHead.transform.position, mousePos, 5 * Time.deltaTime);
+        //close but still has some hangups 
+        wormHead.transform.right = new Vector3(mousePos.x, mousePos.y, 0);
 
         carveTunnel();
         cleanMasks();
@@ -96,7 +98,7 @@ public class GameManager : MonoBehaviour
         float yPosition = UnityEngine.Random.Range(mapBounds.min.y, mapBounds.max.y);
 
         GameObject foodInstance = Instantiate(rootPrefab);
-        foodInstance.transform.position = new Vector3 (xPosition, yPosition, -1);
+        foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
     }
 
     public void spawnRocks()
@@ -108,5 +110,4 @@ public class GameManager : MonoBehaviour
         GameObject foodInstance = Instantiate(rockPrefab);
         foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
     }
-}
 }

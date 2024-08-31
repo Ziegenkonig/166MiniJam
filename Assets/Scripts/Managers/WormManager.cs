@@ -71,6 +71,7 @@ public class WormManager : MonoBehaviour
             if (distance > segmentPadding) 
             {
                 currentWormSegment.transform.position = Vector3.MoveTowards(currentWormSegment.transform.position, lastWormSegment.transform.position, speed * Time.deltaTime);
+                currentWormSegment.transform.right = new Vector3(lastWormSegment.transform.position.x, lastWormSegment.transform.position.y, 0);
             }
             lastWormSegment = currentWormSegment;
             segments.Enqueue(currentWormSegment);
