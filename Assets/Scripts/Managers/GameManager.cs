@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
 using UnityEngine;
 
-public class Fore : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public GameObject tunnelMaskPrefab;
 
     public GameObject previousMask;
+
+    public GameObject wormHead;
 
     public int poolSize;
     List<GameObject> maskPool;
@@ -31,34 +34,38 @@ public class Fore : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        colorPixel();
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        wormHead.transform.position = Vector3.MoveTowards(wormHead.transform.position, mousePos, 5 * Time.deltaTime);
+
+        carveTunnel();
         cleanMasks();
     }
 
-    public void colorPixel()
+    public void carveTunnel()
     {
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 wormHeadPos = wormHead.transform.position;
         if (previousMask == null)
         {
             GameObject newMask = maskPool[0];
 
-            newMask.transform.position = new Vector2(mousePos.x, mousePos.y);
+            newMask.transform.position = new Vector2(wormHeadPos.x, wormHeadPos.y);
             previousMask = newMask;
 
             maskPool.Remove(newMask);
             activeMasks.Enqueue(previousMask);
         }
-        else if (Vector2.Distance(previousMask.transform.position, mousePos) > .35f)
+        else if (Vector2.Distance(previousMask.transform.position, wormHeadPos) > .35f)
         {
             GameObject newMask = maskPool[0];
 
-            newMask.transform.position = new Vector2(mousePos.x, mousePos.y);
+            newMask.transform.position = new Vector2(wormHeadPos.x, wormHeadPos.y);
             previousMask = newMask;
 
             maskPool.Remove(newMask);
             activeMasks.Enqueue(previousMask);
         }
-        
+
     }
 
     public void cleanMasks()
