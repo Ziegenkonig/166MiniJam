@@ -9,6 +9,19 @@ using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance;
+
+    //Singleton
+    void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
     public GameObject tunnelMaskPrefab;
 
     public GameObject previousMask;
@@ -28,6 +41,10 @@ public class GameManager : MonoBehaviour
 
     public GameObject foreground;
 
+    public int foodAmount;
+
+    public int rockAmount;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,8 +59,16 @@ public class GameManager : MonoBehaviour
         WormManager.Instance.spawn();
         wormHead = WormManager.Instance.wormHead;
         wormAss = WormManager.Instance.wormAss;
-        spawnFood();
-        spawnRocks();
+
+        for (int i = 0; i < foodAmount; i++)
+        {
+            spawnFood();
+        }
+
+        for (int i = 0; i < rockAmount; i++)
+        {
+            spawnRocks();
+        }
     }
 
     // Update is called once per frame
@@ -94,7 +119,7 @@ public class GameManager : MonoBehaviour
 
     public void moveCamera()
     {
-        Camera.main.transform.position = new Vector3(wormHead.transform.position.x, 
+        Camera.main.transform.position = new Vector3(wormHead.transform.position.x,
                                                      wormHead.transform.position.y,
                                                      Camera.main.transform.position.z);
     }
@@ -104,7 +129,7 @@ public class GameManager : MonoBehaviour
         Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
         float xPosition = UnityEngine.Random.Range(mapBounds.min.x, mapBounds.max.x);
         float yPosition = UnityEngine.Random.Range(mapBounds.min.y, mapBounds.max.y);
- 
+
         GameObject foodInstance = Instantiate(rootPrefab);
         foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
     }

@@ -24,6 +24,7 @@ public class Edible : MonoBehaviour
         Destroy(gameObject);
 
         WormManager.Instance.eatEdible(energyGain, upgradeGain);
+        GameManager.Instance.spawnFood();
     }
 
 }

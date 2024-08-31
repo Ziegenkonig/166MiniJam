@@ -242,8 +242,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6fb584b02eddc1249a59ec6d9aabeba7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   speed: 5
   maxEnergy: 0
   energyDrainRate: 0
@@ -298,8 +298,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8ff8ae0d53b2024692231271a77ba67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   tunnelMaskPrefab: {fileID: 6794479936360797373, guid: 0a30cb521c7d7b94794541d27ef64bb5, type: 3}
   previousMask: {fileID: 0}
   wormHead: {fileID: 0}
@@ -308,6 +308,8 @@ MonoBehaviour:
   poolSize: 100
   tunnelLength: 100
   foreground: {fileID: 1776237657}
+  foodAmount: 0
+  rockAmount: 0
 --- !u!4 &1082555425
 Transform:
   m_ObjectHideFlags: 0
