@@ -29,16 +29,22 @@ public class GameManager : MonoBehaviour
         }
 
         activeMasks = new Queue<GameObject>();
+
+        WormManager.Instance.spawn();
+        wormHead = WormManager.Instance.wormHead;
     }
 
     // Update is called once per frame
     void Update()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos.z = -10;
         wormHead.transform.position = Vector3.MoveTowards(wormHead.transform.position, mousePos, 5 * Time.deltaTime);
 
         carveTunnel();
         cleanMasks();
+
+        WormManager.Instance.followTheLeader();
     }
 
     public void carveTunnel()
