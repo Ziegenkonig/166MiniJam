@@ -31,6 +31,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject rootPrefab;
 
+    public GameObject bonePrefab;
+
     public GameObject rockPrefab;
 
     public int poolSize;
@@ -130,8 +132,20 @@ public class GameManager : MonoBehaviour
         float xPosition = UnityEngine.Random.Range(mapBounds.min.x, mapBounds.max.x);
         float yPosition = UnityEngine.Random.Range(mapBounds.min.y, mapBounds.max.y);
 
-        GameObject foodInstance = Instantiate(rootPrefab);
-        foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+
+        int foodType = Random.Range(0, 2);
+
+        if (foodType == 0)
+        {
+            GameObject foodInstance = Instantiate(rootPrefab);
+            foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+        }
+        else 
+        {
+            GameObject foodInstance = Instantiate(bonePrefab);
+            foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+        }
+        
     }
 
     public void spawnRocks()
