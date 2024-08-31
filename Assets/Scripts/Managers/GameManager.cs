@@ -46,9 +46,14 @@ public class GameManager : MonoBehaviour
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = -10;
-        wormHead.transform.position = Vector3.MoveTowards(wormHead.transform.position, mousePos, 5 * Time.deltaTime);
+        wormHead.transform.position = Vector3.MoveTowards(wormHead.transform.position, mousePos, 
+            WormManager.Instance.speed * Time.deltaTime);
         //close but still has some hangups 
-        wormHead.transform.right = new Vector3(mousePos.x, mousePos.y, 0);
+        //wormHead.transform.right = Vector3.MoveTowards(wormHead.transform.right, new Vector3(mousePos.x, mousePos.y, 0), WormManager.Instance.speed * Time.deltaTime);
+        Vector3 diff = mousePos - wormHead.transform.position;
+        diff.Normalize();
+        float rotationZ = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+        wormHead.transform.rotation = Quaternion.Euler(mousePos.x, mousePos.y, rotationZ);
 
         carveTunnel();
         cleanMasks();

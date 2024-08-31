@@ -71,8 +71,11 @@ public class WormManager : MonoBehaviour
             if (distance > segmentPadding) 
             {
                 currentWormSegment.transform.position = Vector3.MoveTowards(currentWormSegment.transform.position, lastWormSegment.transform.position, speed * Time.deltaTime);
-                currentWormSegment.transform.right = new Vector3(lastWormSegment.transform.position.x, lastWormSegment.transform.position.y, 0);
+                //currentWormSegment.transform.right = Vector3.MoveTowards(currentWormSegment.transform.right,new Vector3(lastWormSegment.transform.position.x, lastWormSegment.transform.position.y, 0f), Time.time);
+                
             }
+            //this will work near perfectly if the head will fuckin rotate right
+            currentWormSegment.transform.rotation = lastWormSegment.transform.rotation;
             lastWormSegment = currentWormSegment;
             segments.Enqueue(currentWormSegment);
         }
