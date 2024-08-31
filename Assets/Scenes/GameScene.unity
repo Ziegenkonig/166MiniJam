@@ -248,8 +248,9 @@ MonoBehaviour:
   maxEnergy: 0
   energyDrainRate: 0
   wormLength: 5
-  segmentPadding: 2
+  segmentPadding: 1
   upgradePoints: 0
+  currentEnergy: 0
   wormHeadPrefab: {fileID: 8519857360675100218, guid: f265ab6609deba24eb03a24d8a9c41e5, type: 3}
   wormBandPrefab: {fileID: 5551725324365023570, guid: c97ee69300af81c4cbcc2ddf4892201d, type: 3}
   wormBodyPrefab: {fileID: 1686133077252857802, guid: 92a93e40530c51a4bae5d28cb0cf07f1, type: 3}
@@ -307,6 +308,8 @@ MonoBehaviour:
   poolSize: 100
   tunnelLength: 100
   foreground: {fileID: 1776237657}
+  foodAmount: 0
+  rockAmount: 0
 --- !u!4 &1082555425
 Transform:
   m_ObjectHideFlags: 0

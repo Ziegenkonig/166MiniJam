@@ -8,6 +8,19 @@ using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance;
+
+    //Singleton
+    void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
     public GameObject tunnelMaskPrefab;
 
     public GameObject previousMask;
@@ -26,6 +39,10 @@ public class GameManager : MonoBehaviour
 
     public GameObject foreground;
 
+    public int foodAmount;
+
+    public int rockAmount;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,8 +56,19 @@ public class GameManager : MonoBehaviour
 
         WormManager.Instance.spawn();
         wormHead = WormManager.Instance.wormHead;
-        spawnFood();
-        spawnRocks();
+
+
+        for (int i = 0; i < foodAmount; i++)
+        {
+            spawnFood();
+        }
+
+        for (int i = 0; i < rockAmount; i++)
+        {
+            spawnRocks();
+        }
+
+
     }
 
     // Update is called once per frame
