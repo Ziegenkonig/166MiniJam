@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
         WormManager.Instance.spawn();
         wormHead = WormManager.Instance.wormHead;
         spawnFood();
+        spawnRocks();
     }
 
     // Update is called once per frame
@@ -101,7 +102,7 @@ public class GameManager : MonoBehaviour
         Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
         float xPosition = UnityEngine.Random.Range(mapBounds.min.x, mapBounds.max.x);
         float yPosition = UnityEngine.Random.Range(mapBounds.min.y, mapBounds.max.y);
-
+ 
         GameObject foodInstance = Instantiate(rootPrefab);
         foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
     }

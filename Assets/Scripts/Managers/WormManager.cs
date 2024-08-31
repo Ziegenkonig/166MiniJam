@@ -24,6 +24,7 @@ public class WormManager : MonoBehaviour
     public int wormLength;
     public int segmentPadding;
     public int upgradePoints;
+    public int currentEnergy;
     
     public GameObject wormHeadPrefab;
     public GameObject wormBandPrefab;
@@ -81,8 +82,12 @@ public class WormManager : MonoBehaviour
         }
     }
 
-    void eatEdible()
+    public void eatEdible(int energyGain, int upgradeGain)
     {
+        upgradePoints += upgradeGain;
+        currentEnergy += energyGain;
+
+        Debug.Log("Eaten");
         // increase worm energy and upgrade points. maybe run animation
     }
 
@@ -90,4 +95,5 @@ public class WormManager : MonoBehaviour
     {
         // destroys all segments of the worm but does not erase this class because we need to keep the values. so just blow up the segments and spawn()
     }
+
 }
