@@ -4,6 +4,7 @@ using TMPro;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
@@ -45,17 +46,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = -10;
-        wormHead.transform.position = Vector3.MoveTowards(wormHead.transform.position, mousePos, 
-            WormManager.Instance.speed * Time.deltaTime);
-        //close but still has some hangups 
-        //wormHead.transform.right = Vector3.MoveTowards(wormHead.transform.right, new Vector3(mousePos.x, mousePos.y, 0), WormManager.Instance.speed * Time.deltaTime);
-        Vector3 diff = mousePos - wormHead.transform.position;
-        diff.Normalize();
-        float rotationZ = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        wormHead.transform.rotation = Quaternion.Euler(mousePos.x, mousePos.y, rotationZ);
-
+        moveWormHead();
         carveTunnel();
         cleanMasks();
 
@@ -115,5 +106,22 @@ public class GameManager : MonoBehaviour
 
         GameObject foodInstance = Instantiate(rockPrefab);
         foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+    }
+
+    public void moveWormHead()
+    {
+        // get position of mouse and set z to -10 to prevent worm from disappearing over time
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos = new Vector3(mousePos.x, mousePos.y, -10);
+
+        //move towards mouse
+        wormHead.transform.position = Vector3.MoveTowards(wormHead.transform.position, mousePos,
+                WormManager.Instance.speed * Time.deltaTime);
+
+        //rotate to face mouse
+        Vector3 direction = mousePos - wormHead.transform.position;
+        direction = new Vector3(direction.x, direction.y, wormHead.transform.position.z);
+        wormHead.transform.LookAt(Vector3.forward, Vector3.Cross(Vector3.forward, direction));
+        wormHead.transform.rotation = new Quaternion(0, 0, wormHead.transform.rotation.z, wormHead.transform.rotation.w);
     }
 }

@@ -22,7 +22,7 @@ public class WormManager : MonoBehaviour
     public int maxEnergy;
     public int energyDrainRate;
     public int wormLength;
-    public int segmentPadding;
+    public float segmentPadding;
     public int upgradePoints;
     public int currentEnergy;
     
@@ -65,18 +65,18 @@ public class WormManager : MonoBehaviour
     {
         GameObject lastWormSegment = segments.Dequeue();
         segments.Enqueue(lastWormSegment);
-        for (int i = 0; i < wormLength - 2; i++)
+        for (int i = 0; i < wormLength - 1; i++)
         {
             GameObject currentWormSegment = segments.Dequeue();
             float distance = Vector3.Distance(currentWormSegment.transform.position, lastWormSegment.transform.position);
             if (distance > segmentPadding) 
             {
                 currentWormSegment.transform.position = Vector3.MoveTowards(currentWormSegment.transform.position, lastWormSegment.transform.position, speed * Time.deltaTime);
-                //currentWormSegment.transform.right = Vector3.MoveTowards(currentWormSegment.transform.right,new Vector3(lastWormSegment.transform.position.x, lastWormSegment.transform.position.y, 0f), Time.time);
-                
+                Vector3 direction = lastWormSegment.transform.position - currentWormSegment.transform.position;
+                currentWormSegment.transform.LookAt(Vector3.forward, Vector3.Cross(Vector3.forward,direction));
+                currentWormSegment.transform.rotation = new Quaternion(0, 0, currentWormSegment.transform.rotation.z, currentWormSegment.transform.rotation.w);
             }
-            //this will work near perfectly if the head will fuckin rotate right
-            currentWormSegment.transform.rotation = lastWormSegment.transform.rotation;
+            
             lastWormSegment = currentWormSegment;
             segments.Enqueue(currentWormSegment);
         }
