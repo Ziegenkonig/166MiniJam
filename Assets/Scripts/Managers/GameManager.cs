@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
@@ -13,6 +14,7 @@ public class GameManager : MonoBehaviour
     public GameObject previousMask;
 
     public GameObject wormHead;
+    public GameObject wormAss;
 
     public GameObject rootPrefab;
 
@@ -39,6 +41,7 @@ public class GameManager : MonoBehaviour
 
         WormManager.Instance.spawn();
         wormHead = WormManager.Instance.wormHead;
+        wormAss = WormManager.Instance.wormAss;
         spawnFood();
         spawnRocks();
     }
@@ -49,6 +52,7 @@ public class GameManager : MonoBehaviour
         moveWormHead();
         carveTunnel();
         cleanMasks();
+        moveCamera();
 
         WormManager.Instance.followTheLeader();
     }
@@ -56,22 +60,22 @@ public class GameManager : MonoBehaviour
     public void carveTunnel()
     {
         //Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 wormHeadPos = wormHead.transform.position;
+        Vector3 maskTargetPos = wormAss.transform.position;
         if (previousMask == null)
         {
             GameObject newMask = maskPool[0];
 
-            newMask.transform.position = new Vector2(wormHeadPos.x, wormHeadPos.y);
+            newMask.transform.position = new Vector2(maskTargetPos.x, maskTargetPos.y);
             previousMask = newMask;
 
             maskPool.Remove(newMask);
             activeMasks.Enqueue(previousMask);
         }
-        else if (Vector2.Distance(previousMask.transform.position, wormHeadPos) > .35f)
+        else if (Vector2.Distance(previousMask.transform.position, maskTargetPos) > .35f)
         {
             GameObject newMask = maskPool[0];
 
-            newMask.transform.position = new Vector2(wormHeadPos.x, wormHeadPos.y);
+            newMask.transform.position = new Vector2(maskTargetPos.x, maskTargetPos.y);
             previousMask = newMask;
 
             maskPool.Remove(newMask);
@@ -86,6 +90,13 @@ public class GameManager : MonoBehaviour
         {
             maskPool.Add(activeMasks.Dequeue());
         }
+    }
+
+    public void moveCamera()
+    {
+        Camera.main.transform.position = new Vector3(wormHead.transform.position.x, 
+                                                     wormHead.transform.position.y,
+                                                     Camera.main.transform.position.z);
     }
 
     public void spawnFood()
@@ -119,9 +130,20 @@ public class GameManager : MonoBehaviour
                 WormManager.Instance.speed * Time.deltaTime);
 
         //rotate to face mouse
-        Vector3 direction = mousePos - wormHead.transform.position;
-        direction = new Vector3(direction.x, direction.y, wormHead.transform.position.z);
-        wormHead.transform.LookAt(Vector3.forward, Vector3.Cross(Vector3.forward, direction));
-        wormHead.transform.rotation = new Quaternion(0, 0, wormHead.transform.rotation.z, wormHead.transform.rotation.w);
+        Vector3 myLocation = wormHead.transform.position;
+        Vector3 targetLocation = mousePos;
+        targetLocation.z = myLocation.z; // ensure there is no 3D rotation by aligning Z position
+
+        // vector from this object towards the target location
+        Vector3 vectorToTarget = targetLocation - myLocation;
+        // rotate that vector by 90 degrees around the Z axis
+        Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90) * vectorToTarget;
+
+        // get the rotation that points the Z axis forward, and the Y axis 90 degrees away from the target
+        // (resulting in the X axis facing the target)
+        Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);
+
+        // changed this from a lerp to a RotateTowards because you were supplying a "speed" not an interpolation value
+        wormHead.transform.rotation = Quaternion.RotateTowards(wormHead.transform.rotation, targetRotation, 1000 * Time.deltaTime);
     }
 }

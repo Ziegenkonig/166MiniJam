@@ -32,6 +32,7 @@ public class WormManager : MonoBehaviour
     public GameObject wormAssPrefab;
 
     public GameObject wormHead;
+    public GameObject wormAss;
 
     private Queue<GameObject> segments;
     void Start()
@@ -43,6 +44,7 @@ public class WormManager : MonoBehaviour
     {
         wormHead = Instantiate(wormHeadPrefab);
         segments.Enqueue(wormHead);
+
         for (int i = 0; i < wormLength - 2; i++)
         {
             if (i == Mathf.Round(wormLength * .2f))
@@ -55,7 +57,7 @@ public class WormManager : MonoBehaviour
                 segments.Enqueue(wormBody);
             }
         }
-        GameObject wormAss = Instantiate(wormAssPrefab);
+        wormAss = Instantiate(wormAssPrefab);
         segments.Enqueue(wormAss);
         wormHead.transform.position = Vector3.zero;
         followTheLeader();
@@ -72,9 +74,27 @@ public class WormManager : MonoBehaviour
             if (distance > segmentPadding) 
             {
                 currentWormSegment.transform.position = Vector3.MoveTowards(currentWormSegment.transform.position, lastWormSegment.transform.position, speed * Time.deltaTime);
-                Vector3 direction = lastWormSegment.transform.position - currentWormSegment.transform.position;
-                currentWormSegment.transform.LookAt(Vector3.forward, Vector3.Cross(Vector3.forward,direction));
-                currentWormSegment.transform.rotation = new Quaternion(0, 0, currentWormSegment.transform.rotation.z, currentWormSegment.transform.rotation.w);
+                
+                //Vector3 direction = lastWormSegment.transform.position - currentWormSegment.transform.position;
+                //currentWormSegment.transform.LookAt(Vector3.forward, Vector3.Cross(Vector3.forward,direction));
+                //currentWormSegment.transform.rotation = new Quaternion(0, 0, currentWormSegment.transform.rotation.z, currentWormSegment.transform.rotation.w);
+
+                //rotate to face the previous segment
+                Vector3 myLocation = currentWormSegment.transform.position;
+                Vector3 targetLocation = lastWormSegment.transform.position;
+                targetLocation.z = myLocation.z; // ensure there is no 3D rotation by aligning Z position
+
+                // vector from this object towards the target location
+                Vector3 vectorToTarget = targetLocation - myLocation;
+                // rotate that vector by 90 degrees around the Z axis
+                Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90) * vectorToTarget;
+
+                // get the rotation that points the Z axis forward, and the Y axis 90 degrees away from the target
+                // (resulting in the X axis facing the target)
+                Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);
+
+                // changed this from a lerp to a RotateTowards because you were supplying a "speed" not an interpolation value
+                currentWormSegment.transform.rotation = Quaternion.RotateTowards(currentWormSegment.transform.rotation, targetRotation, 1000 * Time.deltaTime);
             }
             
             lastWormSegment = currentWormSegment;
