@@ -13,11 +13,17 @@ public class GameManager : MonoBehaviour
 
     public GameObject wormHead;
 
+    public GameObject rootPrefab;
+
+    public GameObject rockPrefab;
+
     public int poolSize;
     List<GameObject> maskPool;
 
     public int tunnelLength;
     Queue<GameObject> activeMasks;
+
+    public GameObject foreground;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +38,7 @@ public class GameManager : MonoBehaviour
 
         WormManager.Instance.spawn();
         wormHead = WormManager.Instance.wormHead;
+        spawnFood();
     }
 
     // Update is called once per frame
@@ -81,4 +88,25 @@ public class GameManager : MonoBehaviour
             maskPool.Add(activeMasks.Dequeue());
         }
     }
+
+    public void spawnFood()
+    {
+        Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
+        float xPosition = UnityEngine.Random.Range(mapBounds.min.x, mapBounds.max.x);
+        float yPosition = UnityEngine.Random.Range(mapBounds.min.y, mapBounds.max.y);
+
+        GameObject foodInstance = Instantiate(rootPrefab);
+        foodInstance.transform.position = new Vector3 (xPosition, yPosition, -1);
+    }
+
+    public void spawnRocks()
+    {
+        Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
+        float xPosition = UnityEngine.Random.Range(mapBounds.min.x, mapBounds.max.x);
+        float yPosition = UnityEngine.Random.Range(mapBounds.min.y, mapBounds.max.y);
+
+        GameObject foodInstance = Instantiate(rockPrefab);
+        foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+    }
+}
 }
