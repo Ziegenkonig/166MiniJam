@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +26,14 @@ public class Edible : MonoBehaviour
 
         WormManager.Instance.eatEdible(energyGain, upgradeGain);
         GameManager.Instance.spawnFood();
+    }
+
+    public void scaleEdible (float edibleScale)
+    {
+        energyGain = Mathf.RoundToInt(energyGain * (edibleScale + 1));
+        upgradeGain = Mathf.RoundToInt(upgradeGain * (edibleScale + 1));
+
+        gameObject.transform.localScale = new Vector2 (edibleScale, edibleScale);
     }
 
 }

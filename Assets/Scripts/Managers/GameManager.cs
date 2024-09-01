@@ -131,21 +131,23 @@ public class GameManager : MonoBehaviour
         Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
         float xPosition = UnityEngine.Random.Range(mapBounds.min.x, mapBounds.max.x);
         float yPosition = UnityEngine.Random.Range(mapBounds.min.y, mapBounds.max.y);
-
+        float edibleScale = UnityEngine.Random.Range(0.15f, 0.5f);
+        GameObject foodInstance;
 
         int foodType = Random.Range(0, 2);
 
         if (foodType == 0)
         {
-            GameObject foodInstance = Instantiate(rootPrefab);
-            foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+            foodInstance = Instantiate(rootPrefab);
         }
         else 
         {
-            GameObject foodInstance = Instantiate(bonePrefab);
-            foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+            foodInstance = Instantiate(bonePrefab);
         }
-        
+
+        Edible edibleClass = foodInstance.GetComponent<Edible>();
+        edibleClass.scaleEdible(edibleScale);
+        foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
     }
 
     public void spawnRocks()

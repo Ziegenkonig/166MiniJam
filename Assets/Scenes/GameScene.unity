@@ -242,8 +242,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6fb584b02eddc1249a59ec6d9aabeba7, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   speed: 5
   maxEnergy: 0
   energyDrainRate: 0
@@ -256,6 +256,7 @@ MonoBehaviour:
   wormBodyPrefab: {fileID: 1686133077252857802, guid: 92a93e40530c51a4bae5d28cb0cf07f1, type: 3}
   wormAssPrefab: {fileID: 1547914618407036199, guid: d2220518cb06b4e499852b53b2f0e3b7, type: 3}
   wormHead: {fileID: 0}
+  wormAss: {fileID: 0}
 --- !u!4 &860398955
 Transform:
   m_ObjectHideFlags: 0
@@ -298,17 +299,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8ff8ae0d53b2024692231271a77ba67, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   tunnelMaskPrefab: {fileID: 6794479936360797373, guid: 0a30cb521c7d7b94794541d27ef64bb5, type: 3}
   previousMask: {fileID: 0}
   wormHead: {fileID: 0}
+  wormAss: {fileID: 0}
   rootPrefab: {fileID: 602622848120668919, guid: 5599a97d56b3d1243856812839e26ede, type: 3}
+  bonePrefab: {fileID: 1117385875610675161, guid: b0df16695f092c346b955f86857dded7, type: 3}
   rockPrefab: {fileID: 6180541746059584343, guid: cbc4022eada471d4bac7e90663e2359b, type: 3}
   poolSize: 100
   tunnelLength: 100
   foreground: {fileID: 1776237657}
-  foodAmount: 0
+  foodAmount: 20
   rockAmount: 0
 --- !u!4 &1082555425
 Transform:
