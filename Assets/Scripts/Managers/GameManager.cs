@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour
     public GameObject wormHead;
     public GameObject wormAss;
 
+    public AudioClip edibleAudio;
+
     public int foodAmount;
 
     public int rockAmount;

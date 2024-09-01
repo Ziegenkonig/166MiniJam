@@ -24,7 +24,7 @@ public class WormManager : MonoBehaviour
     public int wormLength;
     public float segmentPadding;
     public int upgradePoints;
-    public int currentEnergy;
+    private int currentEnergy;
     
     public GameObject wormHeadPrefab;
     public GameObject wormBandPrefab;
@@ -40,13 +40,19 @@ public class WormManager : MonoBehaviour
     public Queue<GameObject> segments;
     private bool isDead = false;
     private DateTime oldTime = DateTime.Now;
+    private DateTime lastDecayTime;
+
     void Start()
     {
+        lastDecayTime = DateTime.Now;
+        currentEnergy = maxEnergy;
         segments = new Queue<GameObject>();
     }
 
     private void Update()
     {
+        energyDecay();
+
         if (isDead)
         {
             AudioSource audioSource = GetComponent<AudioSource>();
@@ -144,4 +150,24 @@ public class WormManager : MonoBehaviour
         isDead = true;
         
     }
+
+    public void energyDecay()
+    {
+        TimeSpan timeSinceLastDecay = DateTime.Now - lastDecayTime;
+
+        if (timeSinceLastDecay.TotalSeconds >= 1)
+        {
+            currentEnergy -= energyDrainRate;
+            lastDecayTime = DateTime.Now;
+            Debug.Log(currentEnergy);
+        }
+
+        if (currentEnergy <= 0)
+        {
+            die();
+        }
+            
+     
+    }
+
 }

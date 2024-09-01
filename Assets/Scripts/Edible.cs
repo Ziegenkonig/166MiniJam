@@ -10,8 +10,8 @@ public class Edible : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-    }
+
+    }   
 
     // Update is called once per frame
     void Update()
@@ -23,6 +23,7 @@ public class Edible : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Destroy(gameObject);
+        GameManager.Instance.GetComponent<AudioSource>().PlayOneShot(GameManager.Instance.edibleAudio, 1.2f); 
 
         WormManager.Instance.eatEdible(energyGain, upgradeGain);
         GameManager.Instance.spawnFood();
