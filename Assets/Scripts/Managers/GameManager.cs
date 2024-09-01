@@ -24,11 +24,6 @@ public class GameManager : MonoBehaviour
 
     public GameObject tunnelMaskPrefab;
 
-    public GameObject previousMask;
-
-    public GameObject wormHead;
-    public GameObject wormAss;
-
     public GameObject rootPrefab;
 
     public GameObject bonePrefab;
@@ -38,10 +33,13 @@ public class GameManager : MonoBehaviour
     public int poolSize;
     List<GameObject> maskPool;
 
+    public GameObject previousMask;
     public int tunnelLength;
     Queue<GameObject> activeMasks;
 
     public GameObject foreground;
+    public GameObject wormHead;
+    public GameObject wormAss;
 
     public int foodAmount;
 
@@ -77,16 +75,15 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         moveWormHead();
-        carveTunnel();
+        carveTunnelMain();
         cleanMasks();
         moveCamera();
 
         WormManager.Instance.followTheLeader();
     }
 
-    public void carveTunnel()
+    public void carveTunnelMain()
     {
-        //Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 maskTargetPos = wormAss.transform.position;
         if (previousMask == null)
         {
@@ -123,7 +120,7 @@ public class GameManager : MonoBehaviour
     {
         Camera.main.transform.position = new Vector3(wormHead.transform.position.x,
                                                      wormHead.transform.position.y,
-                                                     Camera.main.transform.position.z);
+                                                     -20);
     }
 
     public void spawnFood()
@@ -163,14 +160,16 @@ public class GameManager : MonoBehaviour
     public void moveWormHead()
     {
         // get position of mouse and set z to -10 to prevent worm from disappearing over time
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos = new Vector3(mousePos.x, mousePos.y, -10);
+        wormHead.transform.position += wormHead.transform.right * Time.deltaTime * 5;
+        wormHead.transform.position = new Vector3(wormHead.transform.position.x, 
+                                                  wormHead.transform.position.y, 
+                                                  -1);
 
-        //move towards mouse
-        wormHead.transform.position = Vector3.MoveTowards(wormHead.transform.position, mousePos,
-                WormManager.Instance.speed * Time.deltaTime);
 
         //rotate to face mouse
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos = new Vector3(mousePos.x, mousePos.y, -1);
+
         Vector3 myLocation = wormHead.transform.position;
         Vector3 targetLocation = mousePos;
         targetLocation.z = myLocation.z; // ensure there is no 3D rotation by aligning Z position
@@ -185,6 +184,6 @@ public class GameManager : MonoBehaviour
         Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);
 
         // changed this from a lerp to a RotateTowards because you were supplying a "speed" not an interpolation value
-        wormHead.transform.rotation = Quaternion.RotateTowards(wormHead.transform.rotation, targetRotation, 1000 * Time.deltaTime);
+        wormHead.transform.rotation = Quaternion.RotateTowards(wormHead.transform.rotation, targetRotation, 50 * Time.deltaTime);
     }
 }

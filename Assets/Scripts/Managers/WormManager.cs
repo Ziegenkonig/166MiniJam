@@ -34,7 +34,7 @@ public class WormManager : MonoBehaviour
     public GameObject wormHead;
     public GameObject wormAss;
 
-    private Queue<GameObject> segments;
+    public Queue<GameObject> segments;
     void Start()
     {
         segments = new Queue<GameObject>();
