@@ -5,6 +5,7 @@ using TMPro;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
@@ -32,6 +33,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject wormDenPrefab;
 
+    public GameObject upgradePointCounter;
+
     public int poolSize;
     List<GameObject> maskPool;
 
@@ -51,6 +54,7 @@ public class GameManager : MonoBehaviour
     public int foodAmount;
 
     public int rockAmount;
+
 
     public bool isMoving = true;
 
@@ -116,6 +120,8 @@ public class GameManager : MonoBehaviour
 
             WormManager.Instance.followTheLeader();
         }
+
+        upgradePointCounter.GetComponent<TextMeshProUGUI>().text = WormManager.Instance.upgradePoints.ToString();
     }
 
     public void carveTunnelMain()

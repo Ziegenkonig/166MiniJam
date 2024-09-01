@@ -99,8 +99,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8076e0058001bf4190885a7ca6df0ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  energyGain: 0
-  upgradeGain: 0
+  energyGain: 4
+  upgradeGain: 4
 --- !u!61 &5005695870653527757
 BoxCollider2D:
   m_ObjectHideFlags: 0
