@@ -184,6 +184,6 @@ public class GameManager : MonoBehaviour
         Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);
 
         // changed this from a lerp to a RotateTowards because you were supplying a "speed" not an interpolation value
-        wormHead.transform.rotation = Quaternion.RotateTowards(wormHead.transform.rotation, targetRotation, 50 * Time.deltaTime);
+        wormHead.transform.rotation = Quaternion.RotateTowards(wormHead.transform.rotation, targetRotation, 75 * Time.deltaTime);
     }
 }
