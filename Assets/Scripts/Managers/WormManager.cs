@@ -39,8 +39,10 @@ public class WormManager : MonoBehaviour
     public GameObject wormAss;
 
     public Queue<GameObject> segments;
-    private bool isDead = false;
-    private DateTime oldTime = DateTime.Now;
+    private bool isDead;
+    private DateTime oldTime;
+    public GameObject deathCanvas;
+    public GameObject denCanvas;
     private DateTime lastDecayTime;
 
     public Image energyBarFill;
@@ -50,6 +52,8 @@ public class WormManager : MonoBehaviour
         lastDecayTime = DateTime.Now;
         currentEnergy = maxEnergy;
         segments = new Queue<GameObject>();
+        oldTime = DateTime.Now;
+        isDead = false;
     }
 
     private void Update()
@@ -76,7 +80,10 @@ public class WormManager : MonoBehaviour
 
     public void spawn()
     {
+        deathCanvas.SetActive(false);
+        denCanvas.SetActive(true);
         wormHead = Instantiate(wormHeadPrefab);
+        GameManager.Instance.wormHead = wormHead;
         segments.Enqueue(wormHead);
 
         for (int i = 0; i < wormLength - 2; i++)
@@ -92,8 +99,10 @@ public class WormManager : MonoBehaviour
             }
         }
         wormAss = Instantiate(wormAssPrefab);
+        GameManager.Instance.wormAss = wormAss;
         segments.Enqueue(wormAss);
         wormHead.transform.position = Vector3.zero;
+        GameManager.Instance.isMoving = true;
         followTheLeader();
     }
 
@@ -153,13 +162,13 @@ public class WormManager : MonoBehaviour
 
     public void die()
     {
+        deathCanvas.SetActive(true);
         GameManager.Instance.gameAudio.Pause();
         GetComponent<AudioSource>().PlayOneShot(crash);
-        Debug.Log("You Died");
-        
         GameManager.Instance.isMoving = false;
         isDead = true;
-        
+        currentEnergy = 0;
+
     }
 
     public void energyDecay()
@@ -177,7 +186,7 @@ public class WormManager : MonoBehaviour
             Debug.Log(currentEnergy);
         }
 
-        if (currentEnergy <= 0)
+        if (currentEnergy <= 0 && !isDead)
         {
             die();
         }

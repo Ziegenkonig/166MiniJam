@@ -56,16 +56,20 @@ public class GameManager : MonoBehaviour
     public int rockAmount;
 
 
-    public bool isMoving = true;
+    public bool isMoving;
 
     public AudioSource wormAudio;
     public AudioSource gameAudio;
     public float globalVolume;
-    public bool isMuted = false;
+    public bool isMuted;
 
     // Start is called before the first frame update
     void Start()
     {
+        isMuted =false;
+        isMoving = false;
+        WormManager.Instance.denCanvas.SetActive(false);
+        WormManager.Instance.deathCanvas.SetActive(false);
         Instantiate(wormDenPrefab);
 
         maskPool = new List<GameObject>();
@@ -76,10 +80,6 @@ public class GameManager : MonoBehaviour
 
         activeMasks = new Queue<GameObject>();
 
-        WormManager.Instance.spawn();
-        wormHead = WormManager.Instance.wormHead;
-        wormAss = WormManager.Instance.wormAss;
-
         for (int i = 0; i < foodAmount; i++)
         {
             spawnFood();
@@ -89,7 +89,8 @@ public class GameManager : MonoBehaviour
         {
             spawnRocks();
         }
-
+        WormManager.Instance.spawn();
+        gameAudio.Play();
         tunnelMaskTexture = new Texture2D(1000, 1000);
         Color fillColor = new Color(0, 0, 0, 0);
         Color[] fillPixels = new Color[tunnelMaskTexture.width * tunnelMaskTexture.height];
@@ -105,7 +106,6 @@ public class GameManager : MonoBehaviour
         wormAudio = WormManager.Instance.gameObject.GetComponent<AudioSource>();
         gameAudio.volume = globalVolume;
         wormAudio.volume = globalVolume;
-        gameAudio.Play();
     }
 
     // Update is called once per frame
@@ -243,10 +243,10 @@ public class GameManager : MonoBehaviour
         int maskCenterY = Mathf.RoundToInt( yPercent * tunnelMaskTexture.height );
 
         tunnelMaskTexture = updateTunnelMask(maskCenterX, maskCenterY);
-        applyTextureAndSprite();
+        test();
     }
 
-    public void applyTextureAndSprite()
+    public void test()
     {
         tunnelMaskTexture.Apply();
 
@@ -303,5 +303,14 @@ public class GameManager : MonoBehaviour
             wormAudio.mute = true;
             gameAudio.mute = true;
         }
+    }
+
+    public void beginPlaying()
+    {
+        WormManager.Instance.denCanvas.SetActive(false);
+        // set title canvas to false
+        WormManager.Instance.spawn();
+        //gameAudio.Stop();
+        gameAudio.Play();
     }
 }
