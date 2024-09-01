@@ -1308,7 +1308,7 @@ MonoBehaviour:
   foreground: {fileID: 1776237657}
   wormHead: {fileID: 0}
   wormAss: {fileID: 0}
-  edibleAudio: {fileID: 0}
+  edibleAudio: {fileID: 8300000, guid: 526b7ac0d8e54d949803c383cd069d7a, type: 3}
   foodAmount: 20
   rockAmount: 20
   isMoving: 1
