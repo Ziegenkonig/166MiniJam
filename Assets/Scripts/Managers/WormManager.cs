@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WormManager : MonoBehaviour
 {
@@ -40,13 +41,21 @@ public class WormManager : MonoBehaviour
     public Queue<GameObject> segments;
     private bool isDead = false;
     private DateTime oldTime = DateTime.Now;
+    private DateTime lastDecayTime;
+
+    public Image energyBarFill;
+
     void Start()
     {
+        lastDecayTime = DateTime.Now;
+        currentEnergy = maxEnergy;
         segments = new Queue<GameObject>();
     }
 
     private void Update()
     {
+        energyDecay();
+
         if (isDead)
         {
             AudioSource audioSource = GetComponent<AudioSource>();
@@ -61,6 +70,8 @@ public class WormManager : MonoBehaviour
                 isDead = false;
             }
         }
+
+        energyBarFill.fillAmount = Mathf.Lerp(energyBarFill.fillAmount, ((float)currentEnergy / maxEnergy), 2 * Time.deltaTime);
     }
 
     public void spawn()
@@ -130,7 +141,13 @@ public class WormManager : MonoBehaviour
         upgradePoints += upgradeGain;
         currentEnergy += energyGain;
 
+        if (currentEnergy > maxEnergy)
+        {
+            currentEnergy = maxEnergy;
+        }
+
         Debug.Log("Eaten");
+       
         // increase worm energy and upgrade points. maybe run animation
     }
 
@@ -144,4 +161,28 @@ public class WormManager : MonoBehaviour
         isDead = true;
         
     }
+
+    public void energyDecay()
+    {
+        TimeSpan timeSinceLastDecay = DateTime.Now - lastDecayTime;
+
+        if (timeSinceLastDecay.TotalSeconds >= 1)
+        {
+            currentEnergy -= energyDrainRate;
+
+            Debug.Log( (float)(currentEnergy / maxEnergy) );
+            //energyBarFill.fillAmount = (float)currentEnergy / maxEnergy;
+
+            lastDecayTime = DateTime.Now;
+            Debug.Log(currentEnergy);
+        }
+
+        if (currentEnergy <= 0)
+        {
+            die();
+        }
+            
+     
+    }
+
 }
