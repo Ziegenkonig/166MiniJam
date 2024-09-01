@@ -34,10 +34,10 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6082973957296142757}
-  - {fileID: 4434699242014152700}
   - {fileID: 7061670279659456850}
   - {fileID: 5619836301699617328}
   - {fileID: 4622169008270063485}
+  - {fileID: 2032293556352122111}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3927621854278422312
@@ -174,13 +174,13 @@ Animator:
   m_GameObject: {fileID: 8519857360675100218}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 68815946f3118ae45a1cd644eccf5719, type: 2}
+  m_Controller: {fileID: 9100000, guid: 115166db923a2724fa518161ff5191c7, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
-  m_WarningMessage:
+  m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
@@ -242,10 +242,10 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 74afe6a5ed39c25439c0960fce21300e, type: 3}
---- !u!4 &4434699242014152700 stripped
+--- !u!4 &2032293556352122111 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4073122264090733731, guid: 74afe6a5ed39c25439c0960fce21300e, type: 3}
-  m_PrefabInstance: {fileID: 364110321434917727}
+  m_PrefabInstance: {fileID: 2644328929706512476}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6523099752829412849
 PrefabInstance:
