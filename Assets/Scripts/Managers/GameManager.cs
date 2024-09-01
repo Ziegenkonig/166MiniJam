@@ -52,9 +52,9 @@ public class GameManager : MonoBehaviour
 
     public bool isMoving = true;
 
-    AudioSource wormAudio;
-    AudioSource gameAudio;
-    public float currentGlobalVolume;
+    public AudioSource wormAudio;
+    public AudioSource gameAudio;
+    public float globalVolume;
     public bool isMuted = false;
 
     // Start is called before the first frame update
@@ -94,7 +94,11 @@ public class GameManager : MonoBehaviour
         tunnelMaskTexture.SetPixels(fillPixels);
         tunnelMaskTexture.Apply();
 
-        gameAudio.volume = currentGlobalVolume;
+
+        gameAudio = gameObject.GetComponent<AudioSource>();
+        wormAudio = WormManager.Instance.gameObject.GetComponent<AudioSource>();
+        gameAudio.volume = globalVolume;
+        wormAudio.volume = globalVolume;
         gameAudio.Play();
     }
 
@@ -259,16 +263,37 @@ public class GameManager : MonoBehaviour
 
     public void lowerVolume()
     {
-        WormManager.
+        if (globalVolume > 0)
+        {
+            globalVolume -= .05f;
+            wormAudio.volume = globalVolume;
+            gameAudio.volume = globalVolume;
+        }
     }
 
-    public void lowerVolume()
+    public void raiseVolume()
     {
-
+        if (globalVolume < 1)
+        {
+            globalVolume += .05f;
+            wormAudio.volume = globalVolume;
+            gameAudio.volume = globalVolume;
+        }
     }
 
-    public void muteVolume()
+    public void toggleMute()
     {
-
+        if (isMuted)
+        {
+            isMuted = false;
+            wormAudio.mute = false;
+            gameAudio.mute = false;
+        }
+        else
+        {
+            isMuted = true;
+            wormAudio.mute = true;
+            gameAudio.mute = true;
+        }
     }
 }

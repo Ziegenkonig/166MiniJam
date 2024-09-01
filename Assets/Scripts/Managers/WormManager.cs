@@ -136,12 +136,11 @@ public class WormManager : MonoBehaviour
 
     public void die()
     {
-        GameManager gameManager = GameManager.Instance;
-        gameManager.toggleMusic = true;
+        GameManager.Instance.gameAudio.Pause();
         GetComponent<AudioSource>().PlayOneShot(crash);
         Debug.Log("You Died");
         
-        gameManager.isMoving = false;
+        GameManager.Instance.isMoving = false;
         isDead = true;
         
     }
