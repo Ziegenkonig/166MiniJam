@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
     public GameObject mainCamera;
     public GameObject birdsEyeCamera;
 
+    public GameObject mainHudCanvas;
+
     public GameObject tunnelMaskPrefab;
     public GameObject rootPrefab;
     public GameObject bonePrefab;
@@ -74,6 +76,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < poolSize; i++)
         {
             maskPool.Add(Instantiate(tunnelMaskPrefab));
+            maskPool[i].SetActive(false);
         }
         activeMasks = new Queue<GameObject>();
 
@@ -86,6 +89,7 @@ public class GameManager : MonoBehaviour
         wormAudio = WormManager.Instance.gameObject.GetComponent<AudioSource>();
         gameAudio.volume = globalVolume;
         wormAudio.volume = globalVolume;
+        gameAudio.Play();
 
         WormManager.Instance.spawn();
     }
@@ -140,6 +144,7 @@ public class GameManager : MonoBehaviour
         {
             GameObject newMask = maskPool[0];
 
+            newMask.SetActive(true);
             newMask.transform.position = new Vector2(maskTargetPos.x, maskTargetPos.y);
             previousMask = newMask;
 
@@ -150,6 +155,7 @@ public class GameManager : MonoBehaviour
         {
             GameObject newMask = maskPool[0];
 
+            newMask.SetActive(true);
             newMask.transform.position = new Vector2(maskTargetPos.x, maskTargetPos.y);
             previousMask = newMask;
 
@@ -164,6 +170,7 @@ public class GameManager : MonoBehaviour
         if (activeMasks.Count >= tunnelLength)
         {
             GameObject oldMask = activeMasks.Dequeue();
+            oldMask.SetActive(false);
             tunnelMaster(oldMask.transform.position);
             maskPool.Add(oldMask);
         }
@@ -252,18 +259,23 @@ public class GameManager : MonoBehaviour
 
     public void resetTunnelMasks()
     {
-        for (int i = 0; i < activeMasks.Count; i++)
+        int activeMasksSize = activeMasks.Count;
+        for (int i = 0; i < activeMasksSize; i++)
         {
-            maskPool.Add(activeMasks.Dequeue());
+            GameObject mask = activeMasks.Dequeue();
+            mask.SetActive(false);
+            maskPool.Add(mask);
         }
     }
 
     public void resetGameScene()
     {
-        birdsEyeCamera.SetActive(false);
+        WormManager.Instance.resetWormStuff();
+
         mainCamera.SetActive(true);
+        birdsEyeCamera.SetActive(false);
+
         Camera.main.transform.position = new Vector3(0, 0, Camera.main.transform.position.z);
-        Camera.main.gameObject.SetActive(true);
 
         resetEdiblesAndEnemies();
         resetTunnelTexture();
@@ -349,9 +361,9 @@ public class GameManager : MonoBehaviour
     public void beginPlaying()
     {
         WormManager.Instance.denCanvas.SetActive(false);
-        // set title canvas to false
+        mainHudCanvas.SetActive(true);
+
         WormManager.Instance.spawn();
-        //gameAudio.Stop();
         gameAudio.Play();
     }
 }

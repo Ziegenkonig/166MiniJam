@@ -42,7 +42,7 @@ public class WormManager : MonoBehaviour
     public GameObject wormAss;
 
     public Queue<GameObject> segments;
-    private bool isDead;
+    public bool isDead;
     private DateTime oldTime;
     public GameObject deathCanvas;
     public GameObject denCanvas;
@@ -67,17 +67,18 @@ public class WormManager : MonoBehaviour
         {
             AudioSource audioSource = GetComponent<AudioSource>();
             TimeSpan interval = DateTime.Now - oldTime;
-            if (segments.Count > 0 && interval.TotalSeconds > 0.5)
+            if (segments.Count > 0 && interval.TotalSeconds > 0.5 && !deathCanvas.activeSelf)
             {
                 audioSource.PlayOneShot(explosion, 0.7f);
                 Destroy(segments.Dequeue());
                 oldTime = DateTime.Now;
             }
-            else if (segments.Count == 0)
+            else if (segments.Count == 0 && !deathCanvas.activeSelf)
             {
                 GameManager.Instance.mainCamera.SetActive(false);
                 GameManager.Instance.birdsEyeCamera.SetActive(true);
                 deathCanvas.SetActive(true);
+                isDead = false;
             }
         }
 
@@ -167,11 +168,20 @@ public class WormManager : MonoBehaviour
 
     public void die()
     {
-        GameManager.Instance.gameAudio.Pause();
+        GameManager.Instance.mainHudCanvas.SetActive(false);
+        GameManager.Instance.gameAudio.Stop();
         GetComponent<AudioSource>().PlayOneShot(crash);
         GameManager.Instance.isMoving = false;
         isDead = true;
         currentEnergy = 0;
+    }
+
+    public void resetWormStuff()
+    {
+        isDead = false;
+        deathCanvas.SetActive(false);
+        denCanvas.SetActive(true);
+        currentEnergy = maxEnergy;
     }
 
     public void energyDecay()
@@ -185,12 +195,10 @@ public class WormManager : MonoBehaviour
             lastDecayTime = DateTime.Now;
         }
 
-        if (currentEnergy <= 0 && !isDead)
+        if (currentEnergy <= 0 && !isDead && !deathCanvas.activeSelf)
         {
             die();
         }
-            
-     
     }
 
     public void maxEnergyUpgrade()
