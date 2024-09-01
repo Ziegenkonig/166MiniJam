@@ -35,9 +35,27 @@ public class WormManager : MonoBehaviour
     public GameObject wormAss;
 
     public Queue<GameObject> segments;
+    private bool isDead = false;
+    private DateTime oldTime = DateTime.Now;
     void Start()
     {
         segments = new Queue<GameObject>();
+    }
+
+    private void Update()
+    {
+        if (isDead)
+        {
+            TimeSpan interval = DateTime.Now - oldTime;
+            if (segments.Count > 0 && interval.TotalSeconds > 0.5)
+            {
+                Destroy(segments.Dequeue());
+                oldTime = DateTime.Now;
+            } else if (segments.Count == 0)
+            {
+                isDead = false;
+            }
+        }
     }
 
     public void spawn()
@@ -111,9 +129,12 @@ public class WormManager : MonoBehaviour
         // increase worm energy and upgrade points. maybe run animation
     }
 
-    void die()
+    public void die()
     {
-        // destroys all segments of the worm but does not erase this class because we need to keep the values. so just blow up the segments and spawn()
+        Debug.Log("You Died");
+        GameManager.Instance.isMoving = false;
+        isDead = true;
+        
     }
 
 }

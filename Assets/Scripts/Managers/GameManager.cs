@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
 
     public int rockAmount;
 
+    public bool isMoving = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -78,12 +80,15 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        moveWormHead();
-        carveTunnelMain();
-        cleanMasks();
-        moveCamera();
+        if (isMoving)
+        {
+            moveWormHead();
+            carveTunnelMain();
+            cleanMasks();
+            moveCamera();
 
-        WormManager.Instance.followTheLeader();
+            WormManager.Instance.followTheLeader();
+        }
     }
 
     public void carveTunnelMain()
