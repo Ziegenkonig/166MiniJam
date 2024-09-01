@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject rockPrefab;
 
+    public GameObject wormDenPrefab;
+
     public int poolSize;
     List<GameObject> maskPool;
 
@@ -48,6 +50,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Instantiate(wormDenPrefab);
+
         maskPool = new List<GameObject>();
         for (int i = 0; i < poolSize; i++)
         {

@@ -305,6 +305,7 @@ MonoBehaviour:
   rootPrefab: {fileID: 602622848120668919, guid: 5599a97d56b3d1243856812839e26ede, type: 3}
   bonePrefab: {fileID: 1117385875610675161, guid: b0df16695f092c346b955f86857dded7, type: 3}
   rockPrefab: {fileID: 6180541746059584343, guid: cbc4022eada471d4bac7e90663e2359b, type: 3}
+  wormDenPrefab: {fileID: 8405287340197020245, guid: 4f3457f2cd81f82468a4aa8f675d1f7b, type: 3}
   poolSize: 100
   previousMask: {fileID: 0}
   tunnelLength: 50
