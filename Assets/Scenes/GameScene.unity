@@ -184,7 +184,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 8
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -242,8 +242,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6fb584b02eddc1249a59ec6d9aabeba7, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   speed: 5
   maxEnergy: 0
   energyDrainRate: 0
@@ -299,20 +299,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8ff8ae0d53b2024692231271a77ba67, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   tunnelMaskPrefab: {fileID: 6794479936360797373, guid: 0a30cb521c7d7b94794541d27ef64bb5, type: 3}
-  previousMask: {fileID: 0}
-  wormHead: {fileID: 0}
-  wormAss: {fileID: 0}
   rootPrefab: {fileID: 602622848120668919, guid: 5599a97d56b3d1243856812839e26ede, type: 3}
   bonePrefab: {fileID: 1117385875610675161, guid: b0df16695f092c346b955f86857dded7, type: 3}
   rockPrefab: {fileID: 6180541746059584343, guid: cbc4022eada471d4bac7e90663e2359b, type: 3}
   poolSize: 100
-  previousMainMask: {fileID: 0}
-  tunnelLengthMain: 50
-  previousSegmentMask: {fileID: 0}
-  tunnelLengthSegment: 5
+  previousMask: {fileID: 0}
+  tunnelLength: 50
   foreground: {fileID: 1776237657}
   wormHead: {fileID: 0}
   wormAss: {fileID: 0}
