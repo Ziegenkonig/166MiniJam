@@ -52,9 +52,13 @@ public class GameManager : MonoBehaviour
 
     public bool isMoving = true;
 
+    private bool playingMusic = false;
+    public bool toggleMusic = false;
+
     // Start is called before the first frame update
     void Start()
     {
+        toggleMusic = true;
         Instantiate(wormDenPrefab);
 
         maskPool = new List<GameObject>();
@@ -93,6 +97,20 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (toggleMusic)
+        {
+            AudioSource gameMusic = GetComponent<AudioSource>();
+            if (playingMusic)
+            {
+                gameMusic.Stop();
+                playingMusic = false;
+            } else
+            {
+                gameMusic.Play();
+                playingMusic = true;
+            }
+            toggleMusic = false;
+        }
         if (isMoving)
         {
             moveWormHead();

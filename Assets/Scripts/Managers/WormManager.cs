@@ -31,6 +31,9 @@ public class WormManager : MonoBehaviour
     public GameObject wormBodyPrefab;
     public GameObject wormAssPrefab;
 
+    public AudioClip explosion;
+    public AudioClip crash;
+
     public GameObject wormHead;
     public GameObject wormAss;
 
@@ -46,9 +49,11 @@ public class WormManager : MonoBehaviour
     {
         if (isDead)
         {
+            AudioSource audioSource = GetComponent<AudioSource>();
             TimeSpan interval = DateTime.Now - oldTime;
             if (segments.Count > 0 && interval.TotalSeconds > 0.5)
             {
+                audioSource.PlayOneShot(explosion, 0.7f);
                 Destroy(segments.Dequeue());
                 oldTime = DateTime.Now;
             } else if (segments.Count == 0)
@@ -131,8 +136,12 @@ public class WormManager : MonoBehaviour
 
     public void die()
     {
+        GameManager gameManager = GameManager.Instance;
+        gameManager.toggleMusic = true;
+        GetComponent<AudioSource>().PlayOneShot(crash);
         Debug.Log("You Died");
-        GameManager.Instance.isMoving = false;
+        
+        gameManager.isMoving = false;
         isDead = true;
         
     }
