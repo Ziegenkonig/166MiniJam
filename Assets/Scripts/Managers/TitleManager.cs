@@ -8,6 +8,15 @@ public class TitleManager : MonoBehaviour
     public GameObject titleCanvas;
     public GameObject creditsCanvas;
 
+    public GameObject titleMask;
+    public GameObject creditsMask;
+
+    public GameObject titleForeground;
+    public GameObject creditsForeground;
+
+    public GameObject titleBackground;
+    public GameObject creditsBackground;
+
     public AudioClip titleSong;
     public AudioSource titleAudio;
     public float globalVolume;
@@ -40,11 +49,29 @@ public class TitleManager : MonoBehaviour
         {
             creditsCanvas.SetActive(false);
             titleCanvas.SetActive(true);
+
+            creditsForeground.SetActive(false);
+            titleForeground.SetActive(true);
+
+            creditsBackground.SetActive(false);
+            titleBackground.SetActive(true);
+
+            creditsMask.SetActive(false);
+            titleMask.SetActive(true);
         }
         else
         {
             creditsCanvas.SetActive(true);
             titleCanvas.SetActive(false);
+
+            creditsForeground.SetActive(true);
+            titleForeground.SetActive(false);
+
+            creditsBackground.SetActive(true);
+            titleBackground.SetActive(false);
+
+            creditsMask.SetActive(true);
+            titleMask.SetActive(false);
         }
     }
 
