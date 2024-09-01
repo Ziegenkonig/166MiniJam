@@ -23,17 +23,21 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
+    public GameObject mainCamera;
+    public GameObject birdsEyeCamera;
+
     public GameObject tunnelMaskPrefab;
-
     public GameObject rootPrefab;
-
     public GameObject bonePrefab;
-
     public GameObject rockPrefab;
-
     public GameObject wormDenPrefab;
 
+    List<GameObject> activeInstances;
+
+    public GameObject foreground;
     public GameObject upgradePointCounter;
+    public GameObject wormHead;
+    public GameObject wormAss;
 
     public int poolSize;
     List<GameObject> maskPool;
@@ -45,67 +49,45 @@ public class GameManager : MonoBehaviour
     public SpriteMask fullTunnelMask;
     public Texture2D tunnelMaskTexture;
 
-    public GameObject foreground;
-    public GameObject wormHead;
-    public GameObject wormAss;
-
     public AudioClip edibleAudio;
-
-    public int foodAmount;
-
-    public int rockAmount;
-
-
-    public bool isMoving;
 
     public AudioSource wormAudio;
     public AudioSource gameAudio;
     public float globalVolume;
     public bool isMuted;
 
+    public int foodAmount;
+    public int rockAmount;
+
+    public bool isMoving = true;
+
     // Start is called before the first frame update
     void Start()
     {
-        isMuted =false;
+        isMuted = false;
         isMoving = false;
         WormManager.Instance.denCanvas.SetActive(false);
         WormManager.Instance.deathCanvas.SetActive(false);
         Instantiate(wormDenPrefab);
-
+        
         maskPool = new List<GameObject>();
         for (int i = 0; i < poolSize; i++)
         {
             maskPool.Add(Instantiate(tunnelMaskPrefab));
         }
-
         activeMasks = new Queue<GameObject>();
 
-        for (int i = 0; i < foodAmount; i++)
-        {
-            spawnFood();
-        }
+        activeInstances = new List<GameObject>();
 
-        for (int i = 0; i < rockAmount; i++)
-        {
-            spawnRocks();
-        }
-        WormManager.Instance.spawn();
-        gameAudio.Play();
-        tunnelMaskTexture = new Texture2D(1000, 1000);
-        Color fillColor = new Color(0, 0, 0, 0);
-        Color[] fillPixels = new Color[tunnelMaskTexture.width * tunnelMaskTexture.height];
-        for (int i = 0; i < fillPixels.Length; i++)
-        {
-            fillPixels[i] = fillColor;
-        }
-        tunnelMaskTexture.SetPixels(fillPixels);
-        tunnelMaskTexture.Apply();
-
+        spawnEdiblesAndEnemies();
+        resetTunnelTexture();
 
         gameAudio = gameObject.GetComponent<AudioSource>();
         wormAudio = WormManager.Instance.gameObject.GetComponent<AudioSource>();
         gameAudio.volume = globalVolume;
         wormAudio.volume = globalVolume;
+
+        WormManager.Instance.spawn();
     }
 
     // Update is called once per frame
@@ -114,7 +96,7 @@ public class GameManager : MonoBehaviour
         if (isMoving)
         {
             moveWormHead();
-            carveTunnelMain();
+            carveTunnel();
             cleanMasks();
             moveCamera();
 
@@ -124,7 +106,34 @@ public class GameManager : MonoBehaviour
         upgradePointCounter.GetComponent<TextMeshProUGUI>().text = WormManager.Instance.upgradePoints.ToString();
     }
 
-    public void carveTunnelMain()
+    public void moveWormHead()
+    {
+        // get position of mouse and set z to -10 to prevent worm from disappearing over time
+        wormHead.transform.position += wormHead.transform.right * Time.deltaTime * 5;
+        wormHead.transform.position = new Vector3(wormHead.transform.position.x, wormHead.transform.position.y, -1);
+
+        //rotate to face mouse
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos = new Vector3(mousePos.x, mousePos.y, -1);
+
+        Vector3 myLocation = wormHead.transform.position;
+        Vector3 targetLocation = mousePos;
+        targetLocation.z = myLocation.z; // ensure there is no 3D rotation by aligning Z position
+
+        // vector from this object towards the target location
+        Vector3 vectorToTarget = targetLocation - myLocation;
+        // rotate that vector by 90 degrees around the Z axis
+        Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90) * vectorToTarget;
+
+        // get the rotation that points the Z axis forward, and the Y axis 90 degrees away from the target
+        // (resulting in the X axis facing the target)
+        Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);
+
+        // changed this from a lerp to a RotateTowards because you were supplying a "speed" not an interpolation value
+        wormHead.transform.rotation = Quaternion.RotateTowards(wormHead.transform.rotation, targetRotation, 75 * Time.deltaTime);
+    }
+
+    public void carveTunnel()
     {
         Vector3 maskTargetPos = wormAss.transform.position;
         if (previousMask == null)
@@ -170,9 +179,9 @@ public class GameManager : MonoBehaviour
     public void spawnFood()
     {
         Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
-        float xPosition = UnityEngine.Random.Range(mapBounds.min.x, mapBounds.max.x);
-        float yPosition = UnityEngine.Random.Range(mapBounds.min.y, mapBounds.max.y);
-        float edibleScale = UnityEngine.Random.Range(0.15f, 0.5f);
+        float xPosition = Random.Range(mapBounds.min.x, mapBounds.max.x);
+        float yPosition = Random.Range(mapBounds.min.y, mapBounds.max.y);
+        float edibleScale = Random.Range(0.15f, 0.5f);
         GameObject foodInstance;
 
         int foodType = Random.Range(0, 2);
@@ -189,46 +198,77 @@ public class GameManager : MonoBehaviour
         Edible edibleClass = foodInstance.GetComponent<Edible>();
         edibleClass.scaleEdible(edibleScale);
         foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+
+        activeInstances.Add(foodInstance);
     }
 
     public void spawnRocks()
     {
         Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
-        float xPosition = UnityEngine.Random.Range(mapBounds.min.x, mapBounds.max.x);
-        float yPosition = UnityEngine.Random.Range(mapBounds.min.y, mapBounds.max.y);
+        float xPosition = Random.Range(mapBounds.min.x, mapBounds.max.x);
+        float yPosition = Random.Range(mapBounds.min.y, mapBounds.max.y);
 
-        GameObject foodInstance = Instantiate(rockPrefab);
-        foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+        GameObject rockInstance = Instantiate(rockPrefab);
+        rockInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+
+        activeInstances.Add(rockInstance);
     }
 
-    public void moveWormHead()
+    public void spawnEdiblesAndEnemies()
     {
-        // get position of mouse and set z to -10 to prevent worm from disappearing over time
-        wormHead.transform.position += wormHead.transform.right * Time.deltaTime * 5;
-        wormHead.transform.position = new Vector3(wormHead.transform.position.x, 
-                                                  wormHead.transform.position.y, 
-                                                  -1);
+        for (int i = 0; i < foodAmount; i++)
+        {
+            spawnFood();
+        }
 
+        for (int i = 0; i < rockAmount; i++)
+        {
+            spawnRocks();
+        }
+    }
 
-        //rotate to face mouse
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos = new Vector3(mousePos.x, mousePos.y, -1);
+    public void resetEdiblesAndEnemies()
+    {
+        foreach (GameObject instance in activeInstances)
+        {
+            Destroy(instance);
+        }
+        activeInstances.Clear();
+    }
 
-        Vector3 myLocation = wormHead.transform.position;
-        Vector3 targetLocation = mousePos;
-        targetLocation.z = myLocation.z; // ensure there is no 3D rotation by aligning Z position
+    public void resetTunnelTexture()
+    {
+        tunnelMaskTexture = new Texture2D(1000, 1000);
+        Color fillColor = new Color(0, 0, 0, 0);
+        Color[] fillPixels = new Color[tunnelMaskTexture.width * tunnelMaskTexture.height];
+        for (int i = 0; i < fillPixels.Length; i++)
+        {
+            fillPixels[i] = fillColor;
+        }
+        tunnelMaskTexture.SetPixels(fillPixels);
+        tunnelMaskTexture.Apply();
+        applyTunnelTexture();
+    }
 
-        // vector from this object towards the target location
-        Vector3 vectorToTarget = targetLocation - myLocation;
-        // rotate that vector by 90 degrees around the Z axis
-        Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 90) * vectorToTarget;
+    public void resetTunnelMasks()
+    {
+        for (int i = 0; i < activeMasks.Count; i++)
+        {
+            maskPool.Add(activeMasks.Dequeue());
+        }
+    }
 
-        // get the rotation that points the Z axis forward, and the Y axis 90 degrees away from the target
-        // (resulting in the X axis facing the target)
-        Quaternion targetRotation = Quaternion.LookRotation(forward: Vector3.forward, upwards: rotatedVectorToTarget);
+    public void resetGameScene()
+    {
+        birdsEyeCamera.SetActive(false);
+        Camera.main.transform.position = new Vector3(0, 0, Camera.main.transform.position.z);
+        Camera.main.gameObject.SetActive(true);
 
-        // changed this from a lerp to a RotateTowards because you were supplying a "speed" not an interpolation value
-        wormHead.transform.rotation = Quaternion.RotateTowards(wormHead.transform.rotation, targetRotation, 75 * Time.deltaTime);
+        resetEdiblesAndEnemies();
+        resetTunnelTexture();
+        resetTunnelMasks();
+
+        spawnEdiblesAndEnemies();
     }
 
     public void tunnelMaster(Vector3 maskPos)
@@ -243,10 +283,10 @@ public class GameManager : MonoBehaviour
         int maskCenterY = Mathf.RoundToInt( yPercent * tunnelMaskTexture.height );
 
         tunnelMaskTexture = updateTunnelMask(maskCenterX, maskCenterY);
-        test();
+        applyTunnelTexture();
     }
 
-    public void test()
+    public void applyTunnelTexture()
     {
         tunnelMaskTexture.Apply();
 

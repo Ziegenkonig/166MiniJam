@@ -72,9 +72,12 @@ public class WormManager : MonoBehaviour
                 audioSource.PlayOneShot(explosion, 0.7f);
                 Destroy(segments.Dequeue());
                 oldTime = DateTime.Now;
-            } else if (segments.Count == 0)
+            }
+            else if (segments.Count == 0)
             {
-                isDead = false;
+                GameManager.Instance.mainCamera.SetActive(false);
+                GameManager.Instance.birdsEyeCamera.SetActive(true);
+                deathCanvas.SetActive(true);
             }
         }
 
@@ -84,10 +87,12 @@ public class WormManager : MonoBehaviour
     public void spawn()
     {
         deathCanvas.SetActive(false);
-        denCanvas.SetActive(true);
+        denCanvas.SetActive(false);
+
         wormHead = Instantiate(wormHeadPrefab);
-        GameManager.Instance.wormHead = wormHead;
         segments.Enqueue(wormHead);
+        GameManager.Instance.wormHead = wormHead;
+        wormHead.transform.position = Vector3.zero;
 
         for (int i = 0; i < wormLength - 2; i++)
         {
@@ -101,10 +106,11 @@ public class WormManager : MonoBehaviour
                 segments.Enqueue(wormBody);
             }
         }
+
         wormAss = Instantiate(wormAssPrefab);
-        GameManager.Instance.wormAss = wormAss;
         segments.Enqueue(wormAss);
-        wormHead.transform.position = Vector3.zero;
+        GameManager.Instance.wormAss = wormAss;
+        
         GameManager.Instance.isMoving = true;
         followTheLeader();
     }
@@ -157,21 +163,15 @@ public class WormManager : MonoBehaviour
         {
             currentEnergy = maxEnergy;
         }
-
-        Debug.Log("Eaten");
-       
-        // increase worm energy and upgrade points. maybe run animation
     }
 
     public void die()
     {
-        deathCanvas.SetActive(true);
         GameManager.Instance.gameAudio.Pause();
         GetComponent<AudioSource>().PlayOneShot(crash);
         GameManager.Instance.isMoving = false;
         isDead = true;
         currentEnergy = 0;
-
     }
 
     public void energyDecay()
@@ -182,11 +182,7 @@ public class WormManager : MonoBehaviour
         {
             currentEnergy -= energyDrainRate;
 
-            Debug.Log( (float)(currentEnergy / maxEnergy) );
-            //energyBarFill.fillAmount = (float)currentEnergy / maxEnergy;
-
             lastDecayTime = DateTime.Now;
-            Debug.Log(currentEnergy);
         }
 
         if (currentEnergy <= 0 && !isDead)
