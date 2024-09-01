@@ -61,7 +61,10 @@ public class WormManager : MonoBehaviour
 
     private void Update()
     {
-        energyDecay();
+        if (GameManager.Instance.isMoving)
+        {
+            energyDecay();
+        }
 
         if (isDead)
         {
