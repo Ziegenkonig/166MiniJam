@@ -261,6 +261,7 @@ public class GameManager : MonoBehaviour
     public void resetGameScene()
     {
         birdsEyeCamera.SetActive(false);
+        mainCamera.SetActive(true);
         Camera.main.transform.position = new Vector3(0, 0, Camera.main.transform.position.z);
         Camera.main.gameObject.SetActive(true);
 
