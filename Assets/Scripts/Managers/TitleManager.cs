@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class TitleManager : MonoBehaviour
 {
+    public GameObject titleCanvas;
+    public GameObject creditsCanvas;
+
     public AudioClip titleSong;
     public AudioSource titleAudio;
     public float globalVolume;
@@ -31,14 +34,23 @@ public class TitleManager : MonoBehaviour
         SceneManager.LoadScene("GameScene");
     }
 
-    public void showCredits()
+    public void toggleCredits()
     {
-
+        if (creditsCanvas.activeSelf)
+        {
+            creditsCanvas.SetActive(false);
+            titleCanvas.SetActive(true);
+        }
+        else
+        {
+            creditsCanvas.SetActive(true);
+            titleCanvas.SetActive(false);
+        }
     }
 
     public void exitGame()
     {
-
+        Application.Quit();
     }
 
     public void lowerVolume()
