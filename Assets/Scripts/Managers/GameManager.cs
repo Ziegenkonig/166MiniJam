@@ -39,6 +39,9 @@ public class GameManager : MonoBehaviour
     public int tunnelLength;
     Queue<GameObject> activeMasks;
 
+    public SpriteMask fullTunnelMask;
+    public Texture2D tunnelMaskTexture;
+
     public GameObject foreground;
     public GameObject wormHead;
     public GameObject wormAss;
@@ -75,6 +78,16 @@ public class GameManager : MonoBehaviour
         {
             spawnRocks();
         }
+
+        tunnelMaskTexture = new Texture2D(1000, 1000);
+        Color fillColor = new Color(0, 0, 0, 0);
+        Color[] fillPixels = new Color[tunnelMaskTexture.width * tunnelMaskTexture.height];
+        for (int i = 0; i < fillPixels.Length; i++)
+        {
+            fillPixels[i] = fillColor;
+        }
+        tunnelMaskTexture.SetPixels(fillPixels);
+        tunnelMaskTexture.Apply();
     }
 
     // Update is called once per frame
@@ -121,7 +134,9 @@ public class GameManager : MonoBehaviour
     {
         if (activeMasks.Count >= tunnelLength)
         {
-            maskPool.Add(activeMasks.Dequeue());
+            GameObject oldMask = activeMasks.Dequeue();
+            tunnelMaster(oldMask.transform.position);
+            maskPool.Add(oldMask);
         }
     }
 
@@ -194,5 +209,43 @@ public class GameManager : MonoBehaviour
 
         // changed this from a lerp to a RotateTowards because you were supplying a "speed" not an interpolation value
         wormHead.transform.rotation = Quaternion.RotateTowards(wormHead.transform.rotation, targetRotation, 75 * Time.deltaTime);
+    }
+
+    public void tunnelMaster(Vector3 maskPos)
+    {
+        SpriteRenderer foregroundRender = foreground.GetComponent<SpriteRenderer>();
+        float mapDimension = foregroundRender.bounds.max.x - foregroundRender.bounds.min.x;
+        Vector3 mapMin = foregroundRender.bounds.min;
+        float xPercent = Vector3.Distance(new Vector3(mapMin.x, 0, 0), new Vector3(maskPos.x, 0, 0)) / mapDimension;
+        float yPercent = Vector3.Distance(new Vector3(mapMin.y, 0, 0), new Vector3(maskPos.y, 0, 0)) / mapDimension;
+
+        int maskCenterX = Mathf.RoundToInt( xPercent * tunnelMaskTexture.width );
+        int maskCenterY = Mathf.RoundToInt( yPercent * tunnelMaskTexture.height );
+
+        tunnelMaskTexture = updateTunnelMask(maskCenterX, maskCenterY);
+        test();
+    }
+
+    public void test()
+    {
+        tunnelMaskTexture.Apply();
+
+        Sprite updatedTunnelSprite = Sprite.Create(tunnelMaskTexture,
+                                                   new Rect(0, 0, tunnelMaskTexture.width, tunnelMaskTexture.height),
+                                                   new Vector2(0.5f, 0.5f));
+
+        fullTunnelMask.sprite = updatedTunnelSprite;
+    }
+
+    public Texture2D updateTunnelMask(int x, int y, int radius = 7)
+    {
+        float rSquared = radius * radius;
+
+        for (int u = x - radius; u < x + radius + 1; u++)
+            for (int v = y - radius; v < y + radius + 1; v++)
+                if ((x - u) * (x - u) + (y - v) * (y - v) < rSquared)
+                    tunnelMaskTexture.SetPixel(u, v, new Color(255, 255, 255, 255));
+
+        return tunnelMaskTexture;
     }
 }
