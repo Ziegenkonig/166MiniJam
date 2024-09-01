@@ -19,7 +19,7 @@ public class WormManager : MonoBehaviour
         Instance = this;
     }
 
-    public int speed;
+    public float speed;
     public int maxEnergy;
     public float energyDrainRate;
     public int wormLength;
@@ -27,8 +27,10 @@ public class WormManager : MonoBehaviour
     public int upgradePoints;
     public float currentEnergy;
     public int maxEnergyUpgradeAmount;
-    public int speedUpgradeAmount;
+    public float speedUpgradeAmount;
     public float energyDecayUpgradeAmount;
+    public int upgradeCost;
+    public int inflationAmount;
     
     public GameObject wormHeadPrefab;
     public GameObject wormBandPrefab;
@@ -199,17 +201,32 @@ public class WormManager : MonoBehaviour
 
     public void maxEnergyUpgrade()
     {
-        maxEnergy += maxEnergyUpgradeAmount;
+        if (upgradePoints > upgradeCost)
+        {
+            maxEnergy += maxEnergyUpgradeAmount;
+            upgradePoints = upgradePoints - upgradeCost;
+            upgradeCost += inflationAmount;
+        }
     }
 
     public void speedUpgrade()
     {
-        speed += speedUpgradeAmount;
+        if (upgradePoints > upgradeCost)
+        {
+            speed += speedUpgradeAmount;
+            upgradePoints = upgradePoints - upgradeCost;
+            upgradeCost += inflationAmount;
+        }
     }
 
     public void energyDecayUpgrade()
     {
-        energyDrainRate -= energyDecayUpgradeAmount;
+        if (upgradePoints > upgradeCost)
+        {
+            energyDrainRate -= energyDecayUpgradeAmount;
+            upgradePoints = upgradePoints - upgradeCost;
+            upgradeCost += inflationAmount;
+        }
     }
 
 }
