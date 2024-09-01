@@ -64,6 +64,7 @@ public class WormManager : MonoBehaviour
         if (GameManager.Instance.isMoving)
         {
             energyDecay();
+            energyBarFill.fillAmount = Mathf.Lerp(energyBarFill.fillAmount, ((float)currentEnergy / maxEnergy), 2 * Time.deltaTime);
         }
 
         if (isDead)
@@ -84,8 +85,6 @@ public class WormManager : MonoBehaviour
                 isDead = false;
             }
         }
-
-        energyBarFill.fillAmount = Mathf.Lerp(energyBarFill.fillAmount, ((float)currentEnergy / maxEnergy), 2 * Time.deltaTime);
     }
 
     public void spawn()
