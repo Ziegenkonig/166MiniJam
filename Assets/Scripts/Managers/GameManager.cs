@@ -52,13 +52,14 @@ public class GameManager : MonoBehaviour
 
     public bool isMoving = true;
 
-    private bool playingMusic = false;
-    public bool toggleMusic = false;
+    AudioSource wormAudio;
+    AudioSource gameAudio;
+    public float currentGlobalVolume;
+    public bool isMuted = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        toggleMusic = true;
         Instantiate(wormDenPrefab);
 
         maskPool = new List<GameObject>();
@@ -92,25 +93,14 @@ public class GameManager : MonoBehaviour
         }
         tunnelMaskTexture.SetPixels(fillPixels);
         tunnelMaskTexture.Apply();
+
+        gameAudio.volume = currentGlobalVolume;
+        gameAudio.Play();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (toggleMusic)
-        {
-            AudioSource gameMusic = GetComponent<AudioSource>();
-            if (playingMusic)
-            {
-                gameMusic.Stop();
-                playingMusic = false;
-            } else
-            {
-                gameMusic.Play();
-                playingMusic = true;
-            }
-            toggleMusic = false;
-        }
         if (isMoving)
         {
             moveWormHead();
@@ -241,10 +231,10 @@ public class GameManager : MonoBehaviour
         int maskCenterY = Mathf.RoundToInt( yPercent * tunnelMaskTexture.height );
 
         tunnelMaskTexture = updateTunnelMask(maskCenterX, maskCenterY);
-        test();
+        applyTextureAndSprite();
     }
 
-    public void test()
+    public void applyTextureAndSprite()
     {
         tunnelMaskTexture.Apply();
 
@@ -265,5 +255,20 @@ public class GameManager : MonoBehaviour
                     tunnelMaskTexture.SetPixel(u, v, new Color(255, 255, 255, 255));
 
         return tunnelMaskTexture;
+    }
+
+    public void lowerVolume()
+    {
+        WormManager.
+    }
+
+    public void lowerVolume()
+    {
+
+    }
+
+    public void muteVolume()
+    {
+
     }
 }
