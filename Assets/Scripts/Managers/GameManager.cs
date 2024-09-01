@@ -23,17 +23,23 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
+    public GameObject mainCamera;
+    public GameObject birdsEyeCamera;
+
+    public GameObject mainHudCanvas;
+
     public GameObject tunnelMaskPrefab;
-
     public GameObject rootPrefab;
-
     public GameObject bonePrefab;
-
     public GameObject rockPrefab;
-
     public GameObject wormDenPrefab;
 
+    List<GameObject> activeInstances;
+
+    public GameObject foreground;
     public GameObject upgradePointCounter;
+    public GameObject wormHead;
+    public GameObject wormAss;
 
     public int poolSize;
     List<GameObject> maskPool;
@@ -45,67 +51,47 @@ public class GameManager : MonoBehaviour
     public SpriteMask fullTunnelMask;
     public Texture2D tunnelMaskTexture;
 
-    public GameObject foreground;
-    public GameObject wormHead;
-    public GameObject wormAss;
-
     public AudioClip edibleAudio;
-
-    public int foodAmount;
-
-    public int rockAmount;
-
-
-    public bool isMoving;
 
     public AudioSource wormAudio;
     public AudioSource gameAudio;
     public float globalVolume;
     public bool isMuted;
 
+    public int foodAmount;
+    public int rockAmount;
+
+    public bool isMoving = true;
+
     // Start is called before the first frame update
     void Start()
     {
-        isMuted =false;
+        isMuted = false;
         isMoving = false;
         WormManager.Instance.denCanvas.SetActive(false);
         WormManager.Instance.deathCanvas.SetActive(false);
         Instantiate(wormDenPrefab);
-
+        
         maskPool = new List<GameObject>();
         for (int i = 0; i < poolSize; i++)
         {
             maskPool.Add(Instantiate(tunnelMaskPrefab));
+            maskPool[i].SetActive(false);
         }
-
         activeMasks = new Queue<GameObject>();
 
-        for (int i = 0; i < foodAmount; i++)
-        {
-            spawnFood();
-        }
+        activeInstances = new List<GameObject>();
 
-        for (int i = 0; i < rockAmount; i++)
-        {
-            spawnRocks();
-        }
-        WormManager.Instance.spawn();
-        gameAudio.Play();
-        tunnelMaskTexture = new Texture2D(1000, 1000);
-        Color fillColor = new Color(0, 0, 0, 0);
-        Color[] fillPixels = new Color[tunnelMaskTexture.width * tunnelMaskTexture.height];
-        for (int i = 0; i < fillPixels.Length; i++)
-        {
-            fillPixels[i] = fillColor;
-        }
-        tunnelMaskTexture.SetPixels(fillPixels);
-        tunnelMaskTexture.Apply();
-
+        spawnEdiblesAndEnemies();
+        resetTunnelTexture();
 
         gameAudio = gameObject.GetComponent<AudioSource>();
         wormAudio = WormManager.Instance.gameObject.GetComponent<AudioSource>();
         gameAudio.volume = globalVolume;
         wormAudio.volume = globalVolume;
+        gameAudio.Play();
+
+        WormManager.Instance.spawn();
     }
 
     // Update is called once per frame
@@ -114,7 +100,7 @@ public class GameManager : MonoBehaviour
         if (isMoving)
         {
             moveWormHead();
-            carveTunnelMain();
+            carveTunnel();
             cleanMasks();
             moveCamera();
 
@@ -124,91 +110,11 @@ public class GameManager : MonoBehaviour
         upgradePointCounter.GetComponent<TextMeshProUGUI>().text = WormManager.Instance.upgradePoints.ToString();
     }
 
-    public void carveTunnelMain()
-    {
-        Vector3 maskTargetPos = wormAss.transform.position;
-        if (previousMask == null)
-        {
-            GameObject newMask = maskPool[0];
-
-            newMask.transform.position = new Vector2(maskTargetPos.x, maskTargetPos.y);
-            previousMask = newMask;
-
-            maskPool.Remove(newMask);
-            activeMasks.Enqueue(previousMask);
-        }
-        else if (Vector2.Distance(previousMask.transform.position, maskTargetPos) > .35f)
-        {
-            GameObject newMask = maskPool[0];
-
-            newMask.transform.position = new Vector2(maskTargetPos.x, maskTargetPos.y);
-            previousMask = newMask;
-
-            maskPool.Remove(newMask);
-            activeMasks.Enqueue(previousMask);
-        }
-
-    }
-
-    public void cleanMasks()
-    {
-        if (activeMasks.Count >= tunnelLength)
-        {
-            GameObject oldMask = activeMasks.Dequeue();
-            tunnelMaster(oldMask.transform.position);
-            maskPool.Add(oldMask);
-        }
-    }
-
-    public void moveCamera()
-    {
-        Camera.main.transform.position = new Vector3(wormHead.transform.position.x,
-                                                     wormHead.transform.position.y,
-                                                     -20);
-    }
-
-    public void spawnFood()
-    {
-        Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
-        float xPosition = UnityEngine.Random.Range(mapBounds.min.x, mapBounds.max.x);
-        float yPosition = UnityEngine.Random.Range(mapBounds.min.y, mapBounds.max.y);
-        float edibleScale = UnityEngine.Random.Range(0.15f, 0.5f);
-        GameObject foodInstance;
-
-        int foodType = Random.Range(0, 2);
-
-        if (foodType == 0)
-        {
-            foodInstance = Instantiate(rootPrefab);
-        }
-        else 
-        {
-            foodInstance = Instantiate(bonePrefab);
-        }
-
-        Edible edibleClass = foodInstance.GetComponent<Edible>();
-        edibleClass.scaleEdible(edibleScale);
-        foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
-    }
-
-    public void spawnRocks()
-    {
-        Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
-        float xPosition = UnityEngine.Random.Range(mapBounds.min.x, mapBounds.max.x);
-        float yPosition = UnityEngine.Random.Range(mapBounds.min.y, mapBounds.max.y);
-
-        GameObject foodInstance = Instantiate(rockPrefab);
-        foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
-    }
-
     public void moveWormHead()
     {
         // get position of mouse and set z to -10 to prevent worm from disappearing over time
         wormHead.transform.position += wormHead.transform.right * Time.deltaTime * 5;
-        wormHead.transform.position = new Vector3(wormHead.transform.position.x, 
-                                                  wormHead.transform.position.y, 
-                                                  -1);
-
+        wormHead.transform.position = new Vector3(wormHead.transform.position.x, wormHead.transform.position.y, -1);
 
         //rotate to face mouse
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -231,6 +137,153 @@ public class GameManager : MonoBehaviour
         wormHead.transform.rotation = Quaternion.RotateTowards(wormHead.transform.rotation, targetRotation, 75 * Time.deltaTime);
     }
 
+    public void carveTunnel()
+    {
+        Vector3 maskTargetPos = wormAss.transform.position;
+        if (previousMask == null)
+        {
+            GameObject newMask = maskPool[0];
+
+            newMask.SetActive(true);
+            newMask.transform.position = new Vector2(maskTargetPos.x, maskTargetPos.y);
+            previousMask = newMask;
+
+            maskPool.Remove(newMask);
+            activeMasks.Enqueue(previousMask);
+        }
+        else if (Vector2.Distance(previousMask.transform.position, maskTargetPos) > .35f)
+        {
+            GameObject newMask = maskPool[0];
+
+            newMask.SetActive(true);
+            newMask.transform.position = new Vector2(maskTargetPos.x, maskTargetPos.y);
+            previousMask = newMask;
+
+            maskPool.Remove(newMask);
+            activeMasks.Enqueue(previousMask);
+        }
+
+    }
+
+    public void cleanMasks()
+    {
+        if (activeMasks.Count >= tunnelLength)
+        {
+            GameObject oldMask = activeMasks.Dequeue();
+            oldMask.SetActive(false);
+            tunnelMaster(oldMask.transform.position);
+            maskPool.Add(oldMask);
+        }
+    }
+
+    public void moveCamera()
+    {
+        Camera.main.transform.position = new Vector3(wormHead.transform.position.x,
+                                                     wormHead.transform.position.y,
+                                                     -20);
+    }
+
+    public void spawnFood()
+    {
+        Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
+        float xPosition = Random.Range(mapBounds.min.x, mapBounds.max.x);
+        float yPosition = Random.Range(mapBounds.min.y, mapBounds.max.y);
+        float edibleScale = Random.Range(0.15f, 0.5f);
+        GameObject foodInstance;
+
+        int foodType = Random.Range(0, 2);
+
+        if (foodType == 0)
+        {
+            foodInstance = Instantiate(rootPrefab);
+        }
+        else 
+        {
+            foodInstance = Instantiate(bonePrefab);
+        }
+
+        Edible edibleClass = foodInstance.GetComponent<Edible>();
+        edibleClass.scaleEdible(edibleScale);
+        foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+
+        activeInstances.Add(foodInstance);
+    }
+
+    public void spawnRocks()
+    {
+        Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
+        float xPosition = Random.Range(mapBounds.min.x, mapBounds.max.x);
+        float yPosition = Random.Range(mapBounds.min.y, mapBounds.max.y);
+
+        GameObject rockInstance = Instantiate(rockPrefab);
+        rockInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+
+        activeInstances.Add(rockInstance);
+    }
+
+    public void spawnEdiblesAndEnemies()
+    {
+        for (int i = 0; i < foodAmount; i++)
+        {
+            spawnFood();
+        }
+
+        for (int i = 0; i < rockAmount; i++)
+        {
+            spawnRocks();
+        }
+    }
+
+    public void resetEdiblesAndEnemies()
+    {
+        foreach (GameObject instance in activeInstances)
+        {
+            Destroy(instance);
+        }
+        activeInstances.Clear();
+    }
+
+    public void resetTunnelTexture()
+    {
+        tunnelMaskTexture = new Texture2D(1000, 1000);
+        Color fillColor = new Color(0, 0, 0, 0);
+        Color[] fillPixels = new Color[tunnelMaskTexture.width * tunnelMaskTexture.height];
+        for (int i = 0; i < fillPixels.Length; i++)
+        {
+            fillPixels[i] = fillColor;
+        }
+        tunnelMaskTexture.SetPixels(fillPixels);
+        tunnelMaskTexture.Apply();
+        applyTunnelTexture();
+    }
+
+    public void resetTunnelMasks()
+    {
+        int activeMasksSize = activeMasks.Count;
+        for (int i = 0; i < activeMasksSize; i++)
+        {
+            GameObject mask = activeMasks.Dequeue();
+            mask.SetActive(false);
+            maskPool.Add(mask);
+        }
+    }
+
+    public void resetGameScene()
+    {
+        WormManager.Instance.resetWormStuff();
+
+        mainCamera.SetActive(true);
+        birdsEyeCamera.SetActive(false);
+
+        Camera.main.transform.position = new Vector3(0, 0, Camera.main.transform.position.z);
+
+        resetEdiblesAndEnemies();
+        resetTunnelTexture();
+        resetTunnelMasks();
+
+        spawnEdiblesAndEnemies();
+    }
+
     public void tunnelMaster(Vector3 maskPos)
     {
         SpriteRenderer foregroundRender = foreground.GetComponent<SpriteRenderer>();
@@ -243,10 +296,10 @@ public class GameManager : MonoBehaviour
         int maskCenterY = Mathf.RoundToInt( yPercent * tunnelMaskTexture.height );
 
         tunnelMaskTexture = updateTunnelMask(maskCenterX, maskCenterY);
-        test();
+        applyTunnelTexture();
     }
 
-    public void test()
+    public void applyTunnelTexture()
     {
         tunnelMaskTexture.Apply();
 
@@ -308,9 +361,9 @@ public class GameManager : MonoBehaviour
     public void beginPlaying()
     {
         WormManager.Instance.denCanvas.SetActive(false);
-        // set title canvas to false
+        mainHudCanvas.SetActive(true);
+
         WormManager.Instance.spawn();
-        //gameAudio.Stop();
         gameAudio.Play();
     }
 }

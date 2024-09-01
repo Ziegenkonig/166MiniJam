@@ -359,7 +359,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &190097632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1434,6 +1434,7 @@ MonoBehaviour:
   crash: {fileID: 8300000, guid: 3b8512721477f7446aa39c11019199ad, type: 3}
   wormHead: {fileID: 0}
   wormAss: {fileID: 0}
+  isDead: 0
   deathCanvas: {fileID: 511811695}
   denCanvas: {fileID: 190097631}
   energyBarFill: {fileID: 1740889284}
@@ -1715,28 +1716,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8ff8ae0d53b2024692231271a77ba67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCamera: {fileID: 519420028}
+  birdsEyeCamera: {fileID: 1378122051}
+  mainHudCanvas: {fileID: 819470670}
   tunnelMaskPrefab: {fileID: 6794479936360797373, guid: 0a30cb521c7d7b94794541d27ef64bb5, type: 3}
   rootPrefab: {fileID: 602622848120668919, guid: 5599a97d56b3d1243856812839e26ede, type: 3}
   bonePrefab: {fileID: 1117385875610675161, guid: b0df16695f092c346b955f86857dded7, type: 3}
   rockPrefab: {fileID: 6180541746059584343, guid: cbc4022eada471d4bac7e90663e2359b, type: 3}
   wormDenPrefab: {fileID: 8405287340197020245, guid: 4f3457f2cd81f82468a4aa8f675d1f7b, type: 3}
+  foreground: {fileID: 1776237657}
   upgradePointCounter: {fileID: 614361258}
+  wormHead: {fileID: 0}
+  wormAss: {fileID: 0}
   poolSize: 100
   previousMask: {fileID: 0}
   tunnelLength: 50
   fullTunnelMask: {fileID: 1489280694}
   tunnelMaskTexture: {fileID: 0}
-  foreground: {fileID: 1776237657}
-  wormHead: {fileID: 0}
-  wormAss: {fileID: 0}
   edibleAudio: {fileID: 8300000, guid: 526b7ac0d8e54d949803c383cd069d7a, type: 3}
+  wormAudio: {fileID: 0}
+  gameAudio: {fileID: 0}
+  globalVolume: 0.05
+  isMuted: 0
   foodAmount: 20
   rockAmount: 20
   isMoving: 1
-  wormAudio: {fileID: 0}
-  gameAudio: {fileID: 0}
-  globalVolume: 0.2
-  isMuted: 0
 --- !u!4 &1082555425
 Transform:
   m_ObjectHideFlags: 0
@@ -2412,7 +2416,7 @@ GameObject:
   - component: {fileID: 1378122053}
   - component: {fileID: 1378122052}
   m_Layer: 0
-  m_Name: EndGameCamera
+  m_Name: BirdsEyeCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2435,7 +2439,7 @@ Camera:
   m_GameObject: {fileID: 1378122051}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -2453,14 +2457,14 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.25
     y: 0
-    width: 1
+    width: 0.5
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
-  orthographic: 1
+  field of view: 12
+  orthographic: 0
   orthographic size: 60
   m_Depth: -1
   m_CullingMask:
@@ -2486,7 +2490,7 @@ Transform:
   m_GameObject: {fileID: 1378122051}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -11}
+  m_LocalPosition: {x: 0, y: 0, z: -500}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3025,11 +3029,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 511811699}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 25}
-  m_SizeDelta: {x: 138.66, y: 163.411}
-  m_Pivot: {x: 0.5, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 75, y: 75}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1694109357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3074,9 +3078,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 860398954}
-        m_TargetAssemblyTypeName: WormManager, Assembly-CSharp
-        m_MethodName: spawn
+      - m_Target: {fileID: 1082555424}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: resetGameScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4130,6 +4134,5 @@ SceneRoots:
   - {fileID: 2113467488}
   - {fileID: 819470674}
   - {fileID: 511811699}
-  - {fileID: 1672489326}
   - {fileID: 190097635}
   - {fileID: 1378122054}
