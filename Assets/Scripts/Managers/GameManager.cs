@@ -5,6 +5,7 @@ using TMPro;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
     public GameObject birdsEyeCamera;
 
     public GameObject mainHudCanvas;
+    public GameObject pauseMenuCanvas;
 
     public GameObject tunnelMaskPrefab;
     public GameObject rootPrefab;
@@ -66,6 +68,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        pauseMenuCanvas.SetActive(false);
         isMuted = false;
         isMoving = false;
         WormManager.Instance.denCanvas.SetActive(false);
@@ -108,6 +111,18 @@ public class GameManager : MonoBehaviour
         }
 
         upgradePointCounter.GetComponent<TextMeshProUGUI>().text = WormManager.Instance.upgradePoints.ToString();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!isMoving)
+            {
+                unpause();
+            }
+            else
+            {
+                pause();
+            }
+        }
     }
 
     public void moveWormHead()
@@ -365,5 +380,22 @@ public class GameManager : MonoBehaviour
 
         WormManager.Instance.spawn();
         gameAudio.Play();
+    }
+
+    public void pause()
+    {
+        isMoving = false;
+        pauseMenuCanvas.SetActive(true);
+    }
+
+    public void unpause()
+    {
+        isMoving = true;
+        pauseMenuCanvas.SetActive(false);
+    }
+
+    public void mainMenu()
+    {
+        SceneManager.LoadScene("TitleScene");
     }
 }
