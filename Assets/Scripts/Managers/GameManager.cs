@@ -136,7 +136,7 @@ public class GameManager : MonoBehaviour
     public void moveWormHead()
     {
         // get position of mouse and set z to -10 to prevent worm from disappearing over time
-        wormHead.transform.position += wormHead.transform.right * Time.deltaTime * 5;
+        wormHead.transform.position += wormHead.transform.right * Time.deltaTime * WormManager.Instance.speed;
         wormHead.transform.position = new Vector3(wormHead.transform.position.x, wormHead.transform.position.y, -1);
 
         //rotate to face mouse
