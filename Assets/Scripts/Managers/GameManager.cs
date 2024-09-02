@@ -40,6 +40,12 @@ public class GameManager : MonoBehaviour
 
     public GameObject foreground;
     public GameObject upgradePointCounter;
+    public GameObject denUpgradePointCounter;
+    public GameObject denCostCounter;
+    public GameObject upgradeOrb;
+    public GameObject speedUpgradePanel;
+    public GameObject maxEnergyUpgradePanel;
+    public GameObject energyDrainUpgradePanel;
     public GameObject wormHead;
     public GameObject wormAss;
 
@@ -111,6 +117,8 @@ public class GameManager : MonoBehaviour
         }
 
         upgradePointCounter.GetComponent<TextMeshProUGUI>().text = WormManager.Instance.upgradePoints.ToString();
+        denUpgradePointCounter.GetComponent<TextMeshProUGUI>().text = WormManager.Instance.upgradePoints.ToString();
+        denCostCounter.GetComponent<TextMeshProUGUI>().text = WormManager.Instance.upgradeCost.ToString();
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {

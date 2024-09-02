@@ -207,8 +207,10 @@ public class WormManager : MonoBehaviour
 
     public void maxEnergyUpgrade()
     {
-        if (upgradePoints > upgradeCost)
+        if (upgradePoints >= upgradeCost)
         {
+            GameObject upgradeOrb = Instantiate(GameManager.Instance.upgradeOrb);
+            upgradeOrb.transform.SetParent(GameManager.Instance.maxEnergyUpgradePanel.transform);
             maxEnergy += maxEnergyUpgradeAmount;
             upgradePoints = upgradePoints - upgradeCost;
             upgradeCost += inflationAmount;
@@ -217,8 +219,10 @@ public class WormManager : MonoBehaviour
 
     public void speedUpgrade()
     {
-        if (upgradePoints > upgradeCost)
+        if (upgradePoints >= upgradeCost)
         {
+            GameObject upgradeOrb = Instantiate(GameManager.Instance.upgradeOrb);
+            upgradeOrb.transform.SetParent(GameManager.Instance.speedUpgradePanel.transform);
             speed += speedUpgradeAmount;
             upgradePoints = upgradePoints - upgradeCost;
             upgradeCost += inflationAmount;
@@ -227,11 +231,16 @@ public class WormManager : MonoBehaviour
 
     public void energyDecayUpgrade()
     {
-        if (upgradePoints > upgradeCost)
+        if (upgradePoints >= upgradeCost)
         {
-            energyDrainRate -= energyDecayUpgradeAmount;
-            upgradePoints = upgradePoints - upgradeCost;
-            upgradeCost += inflationAmount;
+            if (energyDrainRate > 0.2f)
+            {
+                GameObject upgradeOrb = Instantiate(GameManager.Instance.upgradeOrb);
+                upgradeOrb.transform.SetParent(GameManager.Instance.energyDrainUpgradePanel.transform);
+                energyDrainRate -= energyDecayUpgradeAmount;
+                upgradePoints = upgradePoints - upgradeCost;
+                upgradeCost += inflationAmount;
+            }
         }
     }
 
