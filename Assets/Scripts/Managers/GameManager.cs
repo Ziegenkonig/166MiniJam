@@ -214,22 +214,30 @@ public class GameManager : MonoBehaviour
         float edibleScale = Random.Range(0.15f, 0.5f);
         GameObject foodInstance;
 
-        int foodType = Random.Range(0, 2);
-
-        if (foodType == 0)
+        if ((xPosition > -10 && xPosition < 10) && (yPosition > -10 && yPosition < 10))
         {
-            foodInstance = Instantiate(rootPrefab);
-        }
-        else 
+            spawnFood();
+        } 
+        
+        else
         {
-            foodInstance = Instantiate(bonePrefab);
+            int foodType = Random.Range(0, 2);
+
+            if (foodType == 0)
+            {
+                foodInstance = Instantiate(rootPrefab);
+            }
+            else
+            {
+                foodInstance = Instantiate(bonePrefab);
+            }
+
+            Edible edibleClass = foodInstance.GetComponent<Edible>();
+            edibleClass.scaleEdible(edibleScale);
+            foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+
+            activeInstances.Add(foodInstance);
         }
-
-        Edible edibleClass = foodInstance.GetComponent<Edible>();
-        edibleClass.scaleEdible(edibleScale);
-        foodInstance.transform.position = new Vector3(xPosition, yPosition, -1);
-
-        activeInstances.Add(foodInstance);
     }
 
     public void spawnRocks()
@@ -237,11 +245,21 @@ public class GameManager : MonoBehaviour
         Bounds mapBounds = foreground.GetComponent<SpriteRenderer>().bounds;
         float xPosition = Random.Range(mapBounds.min.x, mapBounds.max.x);
         float yPosition = Random.Range(mapBounds.min.y, mapBounds.max.y);
+        float rockScale = Random.Range(2.5f, 4.5f);
 
-        GameObject rockInstance = Instantiate(rockPrefab);
-        rockInstance.transform.position = new Vector3(xPosition, yPosition, -1);
-
-        activeInstances.Add(rockInstance);
+        if ( (xPosition > -10 && xPosition < 10) && (yPosition > -10 && yPosition < 10))
+        {
+            Debug.Log("blah");
+            spawnRocks();
+        }
+        else
+        {
+            Debug.Log("bleh");
+            GameObject rockInstance = Instantiate(rockPrefab);
+            rockInstance.transform.localScale = new Vector2(rockScale, rockScale);
+            rockInstance.transform.position = new Vector3(xPosition, yPosition, -1);
+            activeInstances.Add(rockInstance);
+        }
     }
 
     public void spawnEdiblesAndEnemies()
