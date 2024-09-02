@@ -231,16 +231,13 @@ public class WormManager : MonoBehaviour
 
     public void energyDecayUpgrade()
     {
-        if (upgradePoints >= upgradeCost)
+        if (upgradePoints >= upgradeCost && energyDrainRate > 0.2f)
         {
-            if (energyDrainRate > 0.2f)
-            {
                 GameObject upgradeOrb = Instantiate(GameManager.Instance.upgradeOrb);
                 upgradeOrb.transform.SetParent(GameManager.Instance.energyDrainUpgradePanel.transform);
                 energyDrainRate -= energyDecayUpgradeAmount;
                 upgradePoints = upgradePoints - upgradeCost;
                 upgradeCost += inflationAmount;
-            }
         }
     }
 
